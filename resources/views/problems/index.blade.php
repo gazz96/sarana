@@ -45,8 +45,9 @@
                             <td>
                                 {{$problem->code}}
                                 <div class="d-flex align-items-center tr-actions">
-                                    <a href="{{route('problems.edit', $problem)}}" class="text-decoration-none">Edit</a>
-                                    <form action="{{route('problems.destroy', $problem)}}" method="POST" class="ms-2">
+                                    <a href="{{route('problems.print', $problem)}}" target="_blank" class="text-decoration-none me-2">Cetak</a> 
+                                    <a href="{{route('problems.edit', $problem)}}" class="text-decoration-none mx-2">Edit</a>
+                                    <form action="{{route('problems.destroy', $problem)}}" method="POST" class="mx-2">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn p-0 text-danger" onclick="return confirm('HAPUS???')">Hapus</button>
@@ -55,7 +56,7 @@
                             </td>
                             <td>{{$problem->user->name ?? '-'}}</td>
                             <td>{{date('d F Y H:i:s', strtotime($problem->date))}}
-                            <td>{{ucfirst(\App\Models\Prolem::$STATUS[$problem->status])}}</td>
+                            <td>{{ucfirst(\App\Models\Problem::$STATUS[$problem->status])}}</td>
                         </tr>
                         @endforeach
                     </tbody>

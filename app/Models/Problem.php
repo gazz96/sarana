@@ -10,9 +10,9 @@ class Problem extends Model
     use HasFactory;
 
     public static $STATUS = [
-        'SELESAI',
         'DIAJUKAN',
         'PROSES',
+        'SELESAI',
         'DIBATALKAN'
     ];
 
@@ -25,9 +25,19 @@ class Problem extends Model
         'note'
     ];
 
+    public function items()
+    {
+        return $this->hasMany(ProblemItem::class);
+    }
+
     public function user() 
     {
         return $this->belongsTo(User::class);    
+    }
+
+    public static function generateLetterNumber($prefix="SURAT")
+    {
+        return $prefix . '/' . date('Ymd') . '/' . Problem::count();
     }
     
 }

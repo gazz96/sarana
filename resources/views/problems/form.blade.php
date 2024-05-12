@@ -24,19 +24,24 @@
                 @endif
                 
                 <div class="row mb-3">
-                    <div class="mb-3 col-md-4">
+                    <div class="mb-3 col-md-3">
                         <label for="i-kode">Kode</label>
-                        <input type="text" class="form-control" id="i-kode" disabled>
+                        <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}">
+                    </div>
+
+                    <div class="mb-3 col-md-3">
+                        <label for="i-date">Tanggal</label>
+                        <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}">
                     </div>
     
-                    <div class="mb-3 col-md-4">
+                    <div class="mb-3 col-md-3">
                         <label for="i-user_id">Permintaan</label>
-                        <input type="text" class="form-control" id="i-user_id" disabled>
+                        <input type="text" class="form-control" id="i-user_id" disabled value="{{auth()->user()->email}}">
                     </div>
     
-                    <div class="mb-3 col-md-4">
+                    <div class="mb-3 col-md-3">
                         <label for="i-status">Status</label>
-                        <input type="text" class="form-control" id="i-status" disabled>
+                        <input type="text" class="form-control" id="i-status" disabled value="{{\App\Models\Problem::$STATUS[$problem->status ?? 0]}}">
                     </div>
                 </div>
                 
@@ -48,14 +53,44 @@
                 <table class="table table-bordered table-hover table-stripped table-responsive" id="table-problem_items">
                     <thead>
                         <tr>
-                            <th>Barang</th>
-                            <th>Masalah</th>
-                            <th>Harga</th>
-                            <th>Note</th>
+                            <th class="text-center">BARANG</th>
+                            <th class="text-center">MASALAH</th>
+                            <th class="text-center">NOTE</th>
+                            <th class="text-center">BIAYA PERBAIKAN</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        @if($problem->id)
+                            @foreach($problem->items()->get() as $index => $item)
+                                <tr>
+                                    <td>
+                                        <input type='hidden' name="items[{{$index}}][id]" value=""/>
+                                        <input type='hidden' name="items[{{$index}}][good_id]" value="{{$item->good_id}}"/>
+                                        <input type='hidden' name="items[{{$index}}][problem]" value="{{$item->probelm}}"/>
+                                        <input type='hidden' name="items[{{$index}}[note]" value="{{$item->note}}"/>
+                                        <input type='hidden' name="items[{{$index}}][price]" value="{{$item->price}}"/>
+                                        {{ $item->good->name ?? '-'}}
+                                    </td>
+                                    <td>{{$item->problem}}</td>
+                                    <td>{{$item->note}}</td>
+                                    <td class="text-end">{{ number_format($item->price) }}</td>
+                                    <td class='text-center'>
+                                        <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
+                                            <i class='bi bi-x'></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-center">GRANDTOTAL</th>
+                            <th id="total" class="text-end">{{ number_format($problem->items()->sum('price')) }}</th>
+                            <th colspan="2"></th>
+                        </tr>
+                    </tfoot>
                 </table>
 
                 <div class="d-flex justify-content-end align-items-center">
@@ -107,11 +142,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="i-price">Harga</label>
+                            <label for="i-price">Biaya Perbaikan</label>
                             <input name="price" type="number" class="form-control" id="i-price">
                         </div>
 
                         <button class="btn btn-primary" id="btn-add-item">Tambah</button>
+                        <button class="btn btn-primary" id="btn-add-more-item">Tambah & Buat Lagi</button>
                     </form>
                 </div>
             </div>
@@ -125,14 +161,28 @@
 
     let items = [];
 
-    const addRow = (item) => {
+    @if($problem->id)
+        @foreach($problem->items()->get() as $item)
+        items.push({
+            good_id: "{{$item->good_id}}",
+            good_name: "{{$item->good->name ?? '-'}}",
+            problem: "{{$item->problem}}",
+            note: "{{$item->note}}",
+            price: "{{$item->price}}"
+        })
+        @endforeach
+    @endif
+
+
+    const addRow = (index, item) => {
         return `
             <tr>
                 <td>
-                    <input type='hidden' name="items[][id]" value=""/>
-                    <input type='hidden' name="items[][problem]" value="${item.problem}"/>
-                    <input type='hidden' name="items[][note]" value="${item.note}"/>
-                    <input type='hidden' name="items[][price]" value="${item.price}"/>
+                    <input type='hidden' name="items[${index}][id]" value=""/>
+                    <input type='hidden' name="items[${index}][good_id]" value="${item.good_id}"/>
+                    <input type='hidden' name="items[${index}][problem]" value="${item.problem}"/>
+                    <input type='hidden' name="items[${index}][note]" value="${item.note}"/>
+                    <input type='hidden' name="items[${index}][price]" value="${item.price}"/>
                     ${item.good_name}
                 </td>
                 <td>${item.problem}</td>
@@ -184,9 +234,45 @@
         }
 
         if(addProblem(problem)) {
-            items.map((problem) => {
-                tableProblemItems.find('tbody').append(addRow(problem));
+            tableProblemItems.find('tbody').empty();
+            let total = 0;
+            items.map((problem, index) => {
+                tableProblemItems.find('tbody').append(addRow(index, problem));
+                total += problem.price;
             })
+            $('#total').html(total)
+
+            form[0].reset();
+            $('#modal-item').modal('hide');
+            return;
+        }
+
+        Toastify({
+            text: "Periksa Kembali",
+            className: "bg-warning"
+        }).showToast();
+
+        
+        
+    });
+
+    $(document).on('click', '#btn-add-more-item', function(e){
+        e.preventDefault();
+        let form = $('#form-problem_item')
+
+        let problem = {
+            good_id: form.find('#i-good_id').val(),
+            good_name: form.find('#i-good_id').find('option:selected').html(),
+            problem: form.find('#i-problem').val(),
+            note: form.find('#i-note').val(),
+            price: form.find('#i-price').val()
+        }
+
+        if(addProblem(problem)) {
+            items.map((problem, index) => {
+                tableProblemItems.find('tbody').append(addRow(index, problem));
+            })
+            form[0].reset();
             return;
         }
 

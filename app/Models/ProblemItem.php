@@ -18,6 +18,8 @@ class ProblemItem extends Model
         'note'
     ];
 
+    protected static $STATUS = ['MENUNGGU', 'DIPROSES', 'SELESAI', 'TIDAK BISA DI PERBAIKI'];
+
     public function good()
     {
         return $this->belongsTo(Good::class);

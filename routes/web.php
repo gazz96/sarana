@@ -32,4 +32,5 @@ Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.
 Route::resource('users', UserController::class);
 Route::resource('goods', GoodController::class);
 Route::resource('locations', LocationController::class);
+Route::get('problems/print/{problem}', [ProblemController::class, 'print'])->name('problems.print');
 Route::resource('problems', ProblemController::class);

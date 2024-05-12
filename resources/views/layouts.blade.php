@@ -20,13 +20,13 @@
     </style>
 </head>
 
-<body>
+<body class="vh-100">
 
     <div class="container-fluid">
         <div class="row">
-            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary vh-100">
+            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
                 <div class="offcanvas-md offcanvas-end bg-body-tertiary" id="offcanvas-sidebar">
-                    <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                    <div class="offcanvas-body d-flex d-md-flex flex-shrink-0 flex-column p-0 pt-lg-3 overflow-y-auto vh-100">
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
                                 <a href="{{ route('dashboard.index') }}"
@@ -56,17 +56,15 @@
                             </li>
                         </ul>
                         <hr>
-                        <div class="dropdown">
+                        <div class="dropdown px-3 mb-3">
                             <a href="#"
-                                class="d-flex align-items-center text-white text-decoration-none dropdown-toggle show"
+                                class="d-flex align-items-center text-decoration-none dropdown-toggle show text-dark"
                                 data-bs-toggle="dropdown" aria-expanded="true">
                                 <img src="https://github.com/mdo.png" alt="" width="32" height="32"
                                     class="rounded-circle me-2">
                                 <strong>mdo</strong>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark text-small shadow show"
-                                style="position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate3d(0px, -34px, 0px);"
-                                data-popper-placement="top-start">
+                            <ul class="dropdown-menu text-small shadow" data-popper-placement="top-start">
                                 <li><a class="dropdown-item" href="#">New project...</a></li>
                                 <li><a class="dropdown-item" href="#">Settings</a></li>
                                 <li><a class="dropdown-item" href="#">Profile</a></li>

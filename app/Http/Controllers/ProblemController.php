@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Good;
 use App\Models\Problem;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,21 +43,36 @@ class ProblemController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'date' => 'required',
-            'note' => 'nullable',
+            'code' => 'nullable',
             'items' => 'required'
         ]);
+
+        if(!$validated['code'])
+        {
+            $validated['code'] = Problem::generateLetterNumber('PRB');
+        }
+
+        $validated['status'] = 0;
 
         $problem = Auth::user()
             ->problems()
             ->create($validated);
 
-        foreach($validated['items'] as $item)
-        {
-            $problem->items()->create($item);
-        }
+        $items = collect($validated['items']);
 
+        $items->map(function($item, $key) use($problem) {
+            $item['status'] = 0;
+            $problem
+                ->items()
+                ->create($item);
+        });
+
+        $problem->items()
+            ->whereNotIn('good_id', $items->pluck('good_id'))
+            ->delete();
 
         return redirect(route('problems.index'))
             ->with('status', 'success')
@@ -82,7 +98,8 @@ class ProblemController extends Controller
      */
     public function edit(Problem $problem)
     {
-        //
+        $goods = Good::orderBy('name', 'ASC')->get();
+        return view('problems.form', compact('problem', 'goods'));
     }
 
     /**
@@ -94,7 +111,43 @@ class ProblemController extends Controller
      */
     public function update(Request $request, Problem $problem)
     {
-        //
+        $validated = $request->validate([
+            'date' => 'required',
+            'code' => 'nullable',
+            'items' => 'required'
+        ]);
+
+        if(!$validated['code'])
+        {
+            $validated['code'] = Problem::generateLetterNumber('PRB');
+        }
+
+        $validated['status'] = 0;
+
+        $problem->update($validated);
+
+        $items = collect($validated['items']);
+
+        $items->map(function($item, $key) use($problem) {
+            $item['status'] = 0;
+            $problem
+                ->items()
+                ->updateOrCreate(
+                    [
+                        'problem_id' => $problem->id,
+                        'good_id' => $item['good_id']
+                    ],
+                    $item
+                );
+        });
+
+        $problem->items()
+            ->whereNotIn('good_id', $items->pluck('good_id'))
+            ->delete();
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Berhasil menyimpan');
     }
 
     /**
@@ -105,6 +158,20 @@ class ProblemController extends Controller
      */
     public function destroy(Problem $problem)
     {
-        //
+        try {
+            $problem->delete();
+            return back()
+                ->with('status', 'success')
+                ->with('message', 'Berhasil dihapus');
+        }
+        catch(Exception $e) {
+            return $e->getMessage();
+        }
+        
+    }
+
+    public function print(Problem $problem)
+    {
+        return view('problems.print', compact('problem'));
     }
 }
