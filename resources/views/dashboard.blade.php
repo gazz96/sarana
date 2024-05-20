@@ -2,43 +2,83 @@
 
 @section('content')
 
-<div class="container my-5">
+<div class="container">
     <div class="row">
         <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h4>{{\App\Models\Good::count()}}</h4>                    
-                    <p class="mb-0">Jumlah Inventaris</p>
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2">{{ number_format(\App\Models\Good::count()) }}</h3>
+                            <p class="mb-2">Jumlah Inventaris</p>
+                           
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <span data-lucide="list"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
 
         <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h4>{{\App\Models\Location::count()}}</h4>                    
-                    <p class="mb-0">Jumlah Lokasi</p>
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2">{{ number_format(\App\Models\Location::count()) }}</h3>
+                            <p class="mb-2">Jumlah Lokasi</p>
+                           
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <span data-lucide="pin"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         
         <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h4>{{\App\Models\Good::count()}}</h4>                    
-                    <p class="mb-0">Masalah Berjalan</p>
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2">{{ number_format(\App\Models\Problem::count()) }}</h3>
+                            <p class="mb-2">Masalah Berjalan</p>
+                           
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <span data-lucide="triangle-alert"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
 
         <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h4>{{\App\Models\Good::count()}}</h4>                    
-                    <p class="mb-0">Masalah Selesai</p>
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2">{{ number_format(\App\Models\Problem::count()) }}</h3>
+                            <p class="mb-2">Masalah Selesai</p>
+                           
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <span data-lucide="check"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

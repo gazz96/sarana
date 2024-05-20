@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="container my-5">
+<div class="container">
     <div class="row">
         <div class="col-md-12">
 
@@ -29,8 +29,8 @@
             </div>
             @endif
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+            <div class="table-responsive bg-white">
+                <table class="table table-bordered table-striped mb-0">
                     <thead>
                         <tr>
                             <th>Nama</th>
@@ -44,7 +44,8 @@
                         @foreach($goods as $good)
                         <tr>
                             <td>
-                                {{$good->name}}
+                                <small>{{$good->code}}</small>
+                                <div>{{$good->name}}</div>
                                 <div class="d-flex align-items-center tr-actions">
                                     <a href="{{route('goods.edit', $good)}}" class="text-decoration-none">Edit</a>
                                     <form action="{{route('goods.destroy', $good)}}" method="POST" class="ms-2">
@@ -62,11 +63,12 @@
                         @endforeach
                     </tbody>
                 </table>
-
-                <div class="d-flex justify-content-end">
-                    {{$goods->links()}}
-                </div>
             </div>
+
+            <div class="d-flex justify-content-end mt-2">
+                {{$goods->links()}}
+            </div>
+
         </div>
     </div>
 </div>

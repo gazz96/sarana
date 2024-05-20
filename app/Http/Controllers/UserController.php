@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,8 @@ class UserController extends Controller
     public function create()
     {
         $user = new User;
-        return view('users.form', compact('user'));
+        $roles = Role::where('name', '!=', 'super user')->orderBy('name', 'ASC')->get();
+        return view('users.form', compact('user', 'roles'));
     }
 
     /**
@@ -40,6 +42,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'role_id' => 'required|exists:roles',
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required'
@@ -73,7 +76,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.form', compact('user'));
+        $roles = Role::where('name', '!=', 'super user')->orderBy('name', 'ASC')->get();
+        return view('users.form', compact('user', 'roles'));
     }
 
     /**
@@ -86,9 +90,15 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
+            'role_id' => 'required|exists:roles,id',
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable'
+        ], [
+            
+        ],
+        [
+            'role_id' => 'Jabatan'
         ]);
 
         if(isset($validated['password']) && !empty($validated['password']))

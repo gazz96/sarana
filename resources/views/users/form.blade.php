@@ -12,7 +12,7 @@
 
     @csrf
 
-    <div class="container my-5">
+    <div class="container">
         <div class="row">
             <div class="col-12 col-md-4">
                 
@@ -24,6 +24,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 @endif
+
+
+                <div class="mb-3">
+                    <labael for="i-role_id">Jabatan</labael>
+                    <select type="text" name="role_id" class="form-control" id="i-role_id">
+                        <option value="">Pilih Jabatan</option>
+                        @foreach($roles as $role)
+                        <option value="{{$role->id}}" {{$user->role_id == $role->id ? 'selected' : ''}}>{{$role->name}}</option>
+                        @endforeach
+                        <option value="30">tidak ada</option>
+                    </select>
+                    @error('role_id')
+                    <span class="invalid-feedback d-block">{{$message}}</span>
+                    @enderror
+                </div>
 
 
                 <div class="mb-3">

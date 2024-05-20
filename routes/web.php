@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoodController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProblemController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,3 +35,10 @@ Route::resource('goods', GoodController::class);
 Route::resource('locations', LocationController::class);
 Route::get('problems/print/{problem}', [ProblemController::class, 'print'])->name('problems.print');
 Route::resource('problems', ProblemController::class);
+
+Route::prefix('settings')
+    ->group(function(){
+        Route::post('/', [SettingController::class, 'saveOptions'])->name('settings.save');
+        Route::get('general', [SettingController::class, 'index'])->name('settings.general');
+        Route::get('approval', [SettingController::class, 'approval'])->name('settings.approval');
+    });
