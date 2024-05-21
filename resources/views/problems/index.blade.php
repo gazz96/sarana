@@ -9,15 +9,15 @@
             <h3>Masalah</h3>
             
             <form action="">
-                <div class="row mb-3">
+                <div class="row align-items-center mb-3">
                     <div class="col-md-4">
-                        <input name="s" type="text" class="form-control" placeholder="Masukan keyword..." value="{{ request('s') }}">
+                        <input name="s" type="text" class="form-control form-control-lg" placeholder="Masukan keyword..." value="{{ request('s') }}">
                     </div>
 
                     <div class="col-md-4"></div>
 
                     <div class="col-md-4 d-flex justify-content-end">
-                        <a href="{{ route('problems.create') }}" class="btn btn-primary">Tambah</a>
+                        <a href="{{ route('problems.create') }}" class="btn btn-lg btn-primary">Tambah</a>
                     </div>
                 </div>
             </form>
@@ -29,7 +29,7 @@
             </div>
             @endif
 
-            <div class="table-responsive bg-white">
+            {{-- <div class="table-responsive bg-white">
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -41,7 +41,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($problems as $problem)
+                        @foreach([] as $problem)
                         <tr>
                             <td>
                                 {{$problem->code}}
@@ -67,7 +67,9 @@
                 <div class="d-flex justify-content-end">
                     {{$problems->links()}}
                 </div>
-            </div>
+            </div> --}}
+
+            {!! $table !!}
         </div>
     </div>
 </div>

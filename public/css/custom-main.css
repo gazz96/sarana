@@ -49,20 +49,20 @@ body {
 }
 
 .btn {
-    padding: 0px 26px !important;
+    /* padding: 0px 26px !important;
     border-radius: 50px !important;
     height: 48px;
     line-height: 48px !important;
-    border-width: 0px;
+    border-width: 0px; */
 }
 
 .btn-primary {
-    background-color: #256ab8 !important;
+    /* background-color: #256ab8 !important; */
 }
 
 .form-control {
-    padding: 10px 26px !important;
-    border-radius: 20px !important;
+    /* padding: 10px 26px !important;
+    border-radius: 20px !important; */
 }
 
 .card {

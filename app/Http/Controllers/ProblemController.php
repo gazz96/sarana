@@ -4,12 +4,114 @@ namespace App\Http\Controllers;
 
 use App\Models\Good;
 use App\Models\Problem;
+use App\Sarana\Html\Table;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class ProblemController extends Controller
 {
+
+
+    public function tableField()
+    {
+
+        $columns = [
+            [
+                'name' => 'code',
+                'label' => 'Kode',
+                'callback' => function($row)
+                {
+                    return "{$row->code}
+                        <div class=\"d-flex align-items-center tr-actions\">
+                            <a href=\"". route('problems.print', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Cetak</a> 
+                            <a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none mx-2\">Edit</a>
+                            <form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"mx-2\">
+                                <input type=\"hidden\" name=\"_token\" value=\"" . csrf_token() . "\" />
+                                <input type=\"hidden\" name=\"_method\" value=\"DELETE\">
+                                <button class=\"btn p-0 text-danger\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
+                            </form>
+                        </div>";
+                }
+            ],
+            [
+                'name' => 'user',
+                'label' => 'Permintaan',
+                'callback' => function($row) {
+                    return $row->user->name ?? '-';
+                }
+            ],
+            [
+                'name' => 'date',
+                'label' => 'Tanggal',
+                'callback' => function($row) {
+                    return date('d F Y H:i:s', strtotime($row->date));
+                }
+            ],
+            [
+                'name' => 'total',
+                'label' => 'Total',
+                'callback' => function($row) {
+                    return number_format($row->items()->sum('price'));
+                }
+            ],
+            [
+                'name' => 'status',
+                'label' => 'Status',
+            ]
+        ];
+
+        if(Auth::user()->hasRole('teknisi'))
+        {
+            return [
+                [
+                    'name' => 'code',
+                    'label' => 'Kode',
+                    'callback' => function($row)
+                    {
+                        return "{$row->code}
+                            <div class=\"d-flex align-items-center tr-actions\"> 
+                                <a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>
+                            </div>";
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Permintaan',
+                    'callback' => function($row) {
+                        return $row->user->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'date',
+                    'label' => 'Tanggal',
+                    'callback' => function($row) {
+                        return date('d F Y H:i:s', strtotime($row->date));
+                    }
+                ],
+                [
+                    'name' => 'total',
+                    'label' => 'Total',
+                    'callback' => function($row) {
+                        return number_format($row->items()->sum('price'));
+                    }
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'Status',
+                    'callback' => function($row ){
+                        return \App\Models\Problem::$STATUS[$row->status ] ?? '';
+                    }
+                ]
+            ];
+        }
+
+
+        return $columns;
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -17,10 +119,18 @@ class ProblemController extends Controller
      */
     public function index(Request $request)
     {
-        $problems = Problem::when($request->s, function($query, $keyword){
-            return $query->where('code', 'LIKE', "%{$keyword}%");
-        })->paginate(20);
-        return view('problems.index', compact('problems'));
+
+        $table = (new Table)
+            ->filters([
+                's' => function($query, $keyword) {
+                    return $query->where('code', 'LIKE', '%' . $keyword . '%');
+                }
+            ])
+            ->setModel(new Problem)
+            ->setPostsPerPage(20)
+            ->columns($this->tableField())->render();
+
+        return view('problems.index', compact('table'));
     }
 
     /**
@@ -99,7 +209,7 @@ class ProblemController extends Controller
     public function edit(Problem $problem)
     {
         $goods = Good::orderBy('name', 'ASC')->get();
-        return view('problems.form', compact('problem', 'goods'));
+        return view('problems.teknisi-form', compact('problem', 'goods'));
     }
 
     /**

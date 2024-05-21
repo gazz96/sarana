@@ -29,12 +29,12 @@
                         <div class="row mb-3">
                             <div class="mb-3 col-md-3">
                                 <label for="i-kode">Kode</label>
-                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}">
+                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}" readonly>
                             </div>
 
                             <div class="mb-3 col-md-3">
                                 <label for="i-date">Tanggal</label>
-                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}">
+                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}" readonly>
                             </div>
             
                             <div class="mb-3 col-md-3">
@@ -84,11 +84,6 @@
                                             <td>{{$item->problem}}</td>
                                             <td>{{$item->note}}</td>
                                             <td class="text-end">{{ number_format($item->price) }}</td>
-                                            <td class='text-center'>
-                                                <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
-                                                    <i data-lucide="x"></i>
-                                                </button>
-                                            </td>
                                         </tr>
                                     @endforeach
                                 @endif
