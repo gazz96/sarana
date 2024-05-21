@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
-use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class ProfileController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $users = User::paginate(20);
-        return view('users.index', compact('users'));
+        $user = Auth::user();
+        return view('profile', compact('user'));
     }
 
     /**
@@ -28,9 +28,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $user = new User;
-        $roles = Role::where('name', '!=', 'super user')->orderBy('name', 'ASC')->get();
-        return view('users.form', compact('user', 'roles'));
+        //
     }
 
     /**
@@ -41,20 +39,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'role_id' => 'required|exists:roles,id',
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required'
-        ]);
-
-        $validated['password'] = Hash::make($validated['password']);
-
-        $user = User::create($validated);
-
-        return redirect(route('users.index'))
-            ->with('status', 'success')
-            ->with('message', 'Berhasil Menyimpan');
+        //
     }
 
     /**
@@ -65,7 +50,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        
+        //
     }
 
     /**
@@ -76,8 +61,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $roles = Role::where('name', '!=', 'super user')->orderBy('name', 'ASC')->get();
-        return view('users.form', compact('user', 'roles'));
+        //
     }
 
     /**
@@ -123,24 +107,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if($user->problems()->count())
-        {
-            return back()
-                ->with('status', 'warning')
-                ->with('message', 'Tidak dapat menghapus user sebelum menghapus masalah');
-
-        }
-
-        try {
-            $user->delete();
-
-            return back()
-                ->with('status', 'success')
-                ->with('message', 'Berhasil Menghapus');
-
-        }
-        catch(Exception $e) {
-            return $e->getMessage();
-        }
+        //
     }
 }

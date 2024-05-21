@@ -6,15 +6,15 @@
   data-sidebar-position: left (default), right
   data-sidebar-behavior: sticky (default), fixed, compact
 -->
-<html lang="en" data-bs-theme="light" data-layout="fluid" data-sidebar-theme="light" data-sidebar-position="left"
+<html lang="en" data-bs-theme="light" data-layout="boxed" data-sidebar-theme="light" data-sidebar-position="left"
     data-sidebar-behavior="sticky">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Responsive Bootstrap 5 Admin &amp; Dashboard Template">
-    <meta name="author" content="Bootlab">
+    <meta name="description" content="Dashboard Template">
+    <meta name="author" content="Bagas Topati">
 
     <title>Sarana & Prasana Sekolah</title>
 
@@ -23,13 +23,13 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="{{ url('css/custom-main.css') }}" rel="stylesheet">
     <link href="{{ url('appstack/css/app.css') }}" rel="stylesheet">
 
     <!-- BEGIN SETTINGS -->
     <!-- Remove this after purchasing -->
-    <script src="js/settings.js"></script>
+    {{-- <script src="{{ url('appstack/js/settings.js') }}"></script> --}}
     <!-- END SETTINGS -->
 
     
@@ -47,29 +47,12 @@
                 @endif
 
                 <ul class="sidebar-nav">
-                    <li class="sidebar-header">
+                    <li class="sidebar-header fw-semibold">
                         Navigasi
                     </li>
-                    {{-- <li class="sidebar-item">
-                        <a data-bs-target="#dashboards" data-bs-toggle="collapse" class="sidebar-link collapsed">
-                            <i class="align-middle" data-lucide="sliders"></i> <span
-                                class="align-middle">Dashboards</span>
-                            <span class="badge badge-sidebar-primary">5</span>
-                        </a>
-                        <ul id="dashboards" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
-                            <li class="sidebar-item"><a class="sidebar-link" href="dashboard-default.html">Default</a>
-                            </li>
-                            <li class="sidebar-item"><a class="sidebar-link"
-                                    href="dashboard-analytics.html">Analytics</a></li>
-                            <li class="sidebar-item"><a class="sidebar-link" href="dashboard-saas.html">SaaS</a></li>
-                            <li class="sidebar-item"><a class="sidebar-link" href="dashboard-social.html">Social</a>
-                            </li>
-                            <li class="sidebar-item"><a class="sidebar-link" href="dashboard-crypto.html">Crypto</a>
-                            </li>
-                        </ul>
-                    </li> --}}
-
                    
+                    @if(auth()->user()->hasRole('super user'))
+
                     <li class="sidebar-item">
                         <a href="{{url('dashboard')}}" class="sidebar-link">
                             <i class="align-middle text-body" data-lucide="home"></i>
@@ -98,11 +81,35 @@
                     </li>
                     <li class="sidebar-item">
                         <a href="{{route('users.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                            <i class="align-middle text-body" data-lucide="users"></i>
                             <span>Pegawai</span>
                         </a>
                     </li>
 
+                    <li class="sidebar-item">
+                        <a href="{{route('profile')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a data-bs-target="#navbar-reports" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                            <i class="align-middle" data-lucide="pie-chart"></i> <span
+                                class="align-middle">Laporan</span>
+                            {{-- <span class="badge badge-sidebar-primary">5</span> --}}
+                        </a>
+                        <ul id="navbar-reports" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{route('reports.problem')}}">Masalah</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{route('reports.finance')}}">Keuangan</a>
+                            </li>
+                            {{-- <li class="sidebar-item"><a class="sidebar-link" href="{{route('settings.approval')}}">Persetujuan</a></li> --}}
+                        </ul>
+                    </li>
+                
                     <li class="sidebar-item">
                         <a data-bs-target="#navbar-settings" data-bs-toggle="collapse" class="sidebar-link collapsed">
                             <i class="align-middle" data-lucide="sliders"></i> <span
@@ -117,6 +124,33 @@
                         </ul>
                     </li>
                   
+                    @endif
+
+                    @if(auth()->user()->hasRole('teknisi'))
+
+                    <li class="sidebar-item">
+                        <a href="{{url('dashboard')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    
+                    <li class="sidebar-item">
+                        <a href="{{route('problems.index')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+                            <span>Masalah</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a href="{{route('profile')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                  
+                    @endif
 
                 </ul>
 
@@ -211,7 +245,7 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item dropdown">
+                        {{-- <li class="nav-item dropdown">
                             <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown"
                                 data-bs-toggle="dropdown">
                                 <div class="position-relative">
@@ -278,15 +312,15 @@
                                     <a href="#" class="text-muted">Show all notifications</a>
                                 </div>
                             </div>
-                        </li>
-                        <li class="nav-item nav-theme-toggle dropdown">
+                        </li> --}}
+                        {{-- <li class="nav-item nav-theme-toggle dropdown">
                             <a class="nav-icon js-theme-toggle" href="#">
                                 <div class="position-relative">
                                     <i class="align-middle text-body nav-theme-toggle-light" data-lucide="sun"></i>
                                     <i class="align-middle text-body nav-theme-toggle-dark" data-lucide="moon"></i>
                                 </div>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item dropdown">
                             <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
                                 data-bs-toggle="dropdown">
@@ -298,17 +332,16 @@
                                 data-bs-toggle="dropdown">
                                 {{-- <img src="img/avatars/avatar.jpg" class="img-fluid rounded-circle me-1 mt-n2 mb-n2"
                                     alt="Chris Wood" width="40" height="40" />  --}}
-                                <span>Aditya</span>
+                                <span>{{auth()->user()->name ?? '-'}}</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1"
+                                <a class="dropdown-item" href="{{route('profile')}}"><i class="align-middle me-1"
                                         data-lucide="user"></i> Profile</a>
-                                <a class="dropdown-item" href="#"><i class="align-middle me-1"
-                                        data-lucide="pie-chart"></i> Analytics</a>
+                                {{-- <a class="dropdown-item" href="#"><i class="align-middle me-1" data-lucide="pie-chart"></i> Analytics</a> --}}
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="pages-settings.html">Settings & Privacy</a>
-                                <a class="dropdown-item" href="#">Help</a>
-                                <a class="dropdown-item" href="#">Sign out</a>
+                                <a class="dropdown-item" href="{{ route('settings.general')}}">Pengaturan</a>
+                                {{-- <a class="dropdown-item" href="#">Help</a> --}}
+                                <a class="dropdown-item" href="{{route('logout')}}">Sign out</a>
                             </div>
                         </li>
                     </ul>
@@ -336,7 +369,7 @@
                 @yield('content')
             </main>
 
-            <footer class="footer">
+            {{-- <footer class="footer">
                 <div class="container-fluid">
                     <div class="row text-muted">
                         <div class="col-6 text-start">
@@ -362,7 +395,7 @@
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer> --}}
         </div>
     </div>
 

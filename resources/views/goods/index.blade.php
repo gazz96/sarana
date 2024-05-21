@@ -44,8 +44,8 @@
                         @foreach($goods as $good)
                         <tr>
                             <td>
-                                <small>{{$good->code}}</small>
-                                <div>{{$good->name}}</div>
+                                <small style="color: #1A143C;">{{$good->code}}</small>
+                                <div class="fw-bold">{{$good->name}}</div>
                                 <div class="d-flex align-items-center tr-actions">
                                     <a href="{{route('goods.edit', $good)}}" class="text-decoration-none">Edit</a>
                                     <form action="{{route('goods.destroy', $good)}}" method="POST" class="ms-2">

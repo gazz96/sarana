@@ -1,0 +1,101 @@
+:root {
+    --bs-primary: #266db5 !important;
+}
+
+html {
+    max-height: calc(100% - 200px);
+    padding: 30px;
+    padding-bottom: 0 !important;
+}
+
+html[data-sidebar-behavior=sticky] .sidebar-content[data-simplebar] {
+    height: calc(100vh - 60px) !important;
+}
+
+
+html[data-layout=boxed] .wrapper {
+    height: calc(100vh - 60px);
+    border-width: 0 !important;
+}
+
+body {
+    background-color: #F5F6F8 !important;
+    font-family: "Poppins" !important;
+    color: #1A143C !important;
+}
+
+.sidebar {
+    border-radius: 20px;
+    overflow: hidden;
+    margin-right: 30px;
+    /* max-width: 250px;
+    min-width: 250px; */
+}
+
+.content {
+    background-color: #F5F6F8;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.content .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0;
+}
+
+.main .navbar {
+    border-radius: 20px;
+}
+
+.btn {
+    padding: 0px 26px !important;
+    border-radius: 50px !important;
+    height: 48px;
+    line-height: 48px !important;
+    border-width: 0px;
+}
+
+.btn-primary {
+    background-color: #256ab8 !important;
+}
+
+.form-control {
+    padding: 10px 26px !important;
+    border-radius: 20px !important;
+}
+
+.card {
+    border-radius: 20px !important;
+}
+
+.sidebar-header {
+    color: #1A143C !important;
+}
+
+.sidebar-link i, .sidebar-link svg, a.sidebar-link i, a.sidebar-link svg {
+    /* color: #256ab8 !important;     */
+    color: #1A143C !important;
+}
+
+.sidebar-link, a.sidebar-link {
+    color: #1A143C !important;
+    font-weight: 700 !important;
+}
+
+html[data-layout=boxed] .wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+}
+
+.table th,
+.table td {
+    color: #1A143C !important;
+}
+
+.sidebar-brand img {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: cover !important;
+}

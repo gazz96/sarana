@@ -24,20 +24,24 @@
                 </div>
                 @endif
 
-
-                <div class="mb-3">
-                    <labael for="i-name">Nama</labael>
-                    <input type="text" name="name" class="form-control" id="i-name" value="{{ old('name', $location->name) }}">
-                    @error('name')
-                    <span class="invalid-feedback d-block">{{$message}}</span>
-                    @enderror
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <labael for="i-name">Nama</labael>
+                            <input type="text" name="name" class="form-control" id="i-name" value="{{ old('name', $location->name) }}">
+                            @error('name')
+                            <span class="invalid-feedback d-block">{{$message}}</span>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
-
-                
+                        
                 <div class="d-flex justify-content-end">
                     <a href="{{route('locations.index')}}" class="btn border me-2">Kembali</a>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
+
+                    
             </div>
         </div>
     </div>

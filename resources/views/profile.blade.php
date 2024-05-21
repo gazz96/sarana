@@ -3,20 +3,15 @@
 @section('content')
 
 
-@if($user->id)
-<form action="{{route('users.update', $user)}}" method="POST">
+<form action="{{route('profile.update', $user)}}" method="POST">
     @method('PUT')
-@else 
-<form action="{{route('users.store')}}" method="POST">
-@endif
-
     @csrf
-
     <div class="container">
         <div class="row">
+            
             <div class="col-12 col-md-4">
                 
-                <h3>Form Pegawai</h3>
+                <h3>Form Profil</h3>
 
                 @if($status = session('status'))
                 <div class="alert alert-{{$status}} alert-dismissible fade show" role="alert">
@@ -27,22 +22,6 @@
 
                 <div class="card">
                     <div class="card-body">
-                        
-                        <div class="mb-3">
-                            <labael for="i-role_id">Jabatan</labael>
-                            <select type="text" name="role_id" class="form-control" id="i-role_id">
-                                <option value="">Pilih Jabatan</option>
-                                @foreach($roles as $role)
-                                <option value="{{$role->id}}" {{$user->role_id == $role->id ? 'selected' : ''}}>{{$role->name}}</option>
-                                @endforeach
-                                <option value="30">tidak ada</option>
-                            </select>
-                            @error('role_id')
-                            <span class="invalid-feedback d-block">{{$message}}</span>
-                            @enderror
-                        </div>
-
-
                         <div class="mb-3">
                             <labael for="i-name">Nama</labael>
                             <input type="text" name="name" class="form-control" id="i-name" value="{{ old('name', $user->name) }}">
@@ -50,7 +29,7 @@
                             <span class="invalid-feedback d-block">{{$message}}</span>
                             @enderror
                         </div>
-
+        
                         <div class="mb-3">
                             <labael for="i-email">Email</labael>
                             <input type="email" name="email" class="form-control" id="i-email" value="{{ old('email', $user->email) }}">
@@ -58,7 +37,7 @@
                             <span class="invalid-feedback d-block">{{$message}}</span>
                             @enderror
                         </div>
-
+        
                         <div class="mb-3">
                             <labael for="i-password">Password</labael>
                             <input type="password" name="password" class="form-control" id="i-password">
@@ -66,7 +45,6 @@
                             <span class="invalid-feedback d-block">{{$message}}</span>
                             @enderror
                         </div>
-
                     </div>
                 </div>
                 

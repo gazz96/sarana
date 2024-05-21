@@ -29,13 +29,14 @@
             </div>
             @endif
 
-            <div class="table-responsive">
+            <div class="table-responsive bg-white">
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>Kode</th>
                             <th>Permintaan</th>
                             <th>Tanggal</th>
+                            <th>Total</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -56,6 +57,7 @@
                             </td>
                             <td>{{$problem->user->name ?? '-'}}</td>
                             <td>{{date('d F Y H:i:s', strtotime($problem->date))}}
+                            <td>{{number_format($problem->items()->sum('price'))}}</td>
                             <td>{{ucfirst(\App\Models\Problem::$STATUS[$problem->status])}}</td>
                         </tr>
                         @endforeach

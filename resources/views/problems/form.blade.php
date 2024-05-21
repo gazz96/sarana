@@ -23,25 +23,31 @@
                     </div>
                 @endif
                 
-                <div class="row mb-3">
-                    <div class="mb-3 col-md-3">
-                        <label for="i-kode">Kode</label>
-                        <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}">
-                    </div>
+                <div class="card">
+                    <div class="card-body">
 
-                    <div class="mb-3 col-md-3">
-                        <label for="i-date">Tanggal</label>
-                        <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}">
-                    </div>
-    
-                    <div class="mb-3 col-md-3">
-                        <label for="i-user_id">Permintaan</label>
-                        <input type="text" class="form-control" id="i-user_id" disabled value="{{auth()->user()->email}}">
-                    </div>
-    
-                    <div class="mb-3 col-md-3">
-                        <label for="i-status">Status</label>
-                        <input type="text" class="form-control" id="i-status" disabled value="{{\App\Models\Problem::$STATUS[$problem->status ?? 0]}}">
+                        <div class="row mb-3">
+                            <div class="mb-3 col-md-3">
+                                <label for="i-kode">Kode</label>
+                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}">
+                            </div>
+
+                            <div class="mb-3 col-md-3">
+                                <label for="i-date">Tanggal</label>
+                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}">
+                            </div>
+            
+                            <div class="mb-3 col-md-3">
+                                <label for="i-user_id">Permintaan</label>
+                                <input type="text" class="form-control" id="i-user_id" disabled value="{{auth()->user()->email}}">
+                            </div>
+            
+                            <div class="mb-3 col-md-3">
+                                <label for="i-status">Status</label>
+                                <input type="text" class="form-control" id="i-status" disabled value="{{\App\Models\Problem::$STATUS[$problem->status ?? 0]}}">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 
@@ -49,49 +55,55 @@
                 
             </div>
             <div class="col-12 col-md-12">
-                
-                <table class="table table-bordered table-hover table-stripped table-responsive" id="table-problem_items">
-                    <thead>
-                        <tr>
-                            <th class="text-center">BARANG</th>
-                            <th class="text-center">MASALAH</th>
-                            <th class="text-center">NOTE</th>
-                            <th class="text-center">BIAYA PERBAIKAN</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if($problem->id)
-                            @foreach($problem->items()->get() as $index => $item)
+                <div class="card">
+                    <div class="card-body">
+
+                    
+                        <table class="table table-hover table-stripped table-responsive" id="table-problem_items">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <input type='hidden' name="items[{{$index}}][id]" value=""/>
-                                        <input type='hidden' name="items[{{$index}}][good_id]" value="{{$item->good_id}}"/>
-                                        <input type='hidden' name="items[{{$index}}][problem]" value="{{$item->probelm}}"/>
-                                        <input type='hidden' name="items[{{$index}}[note]" value="{{$item->note}}"/>
-                                        <input type='hidden' name="items[{{$index}}][price]" value="{{$item->price}}"/>
-                                        {{ $item->good->name ?? '-'}}
-                                    </td>
-                                    <td>{{$item->problem}}</td>
-                                    <td>{{$item->note}}</td>
-                                    <td class="text-end">{{ number_format($item->price) }}</td>
-                                    <td class='text-center'>
-                                        <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
-                                            <i class='bi bi-x'></i>
-                                        </button>
-                                    </td>
+                                    <th class="text-center">BARANG</th>
+                                    <th class="text-center">MASALAH</th>
+                                    <th class="text-center">NOTE</th>
+                                    <th class="text-center">BIAYA PERBAIKAN</th>
+                                    <th></th>
                                 </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="3" class="text-center">GRANDTOTAL</th>
-                            <th id="total" class="text-end">{{ number_format($problem->items()->sum('price')) }}</th>
-                            <th colspan="2"></th>
-                        </tr>
-                    </tfoot>
-                </table>
+                            </thead>
+                            <tbody>
+                                @if($problem->id)
+                                    @foreach($problem->items()->get() as $index => $item)
+                                        <tr>
+                                            <td>
+                                                <input type='hidden' name="items[{{$index}}][id]" value=""/>
+                                                <input type='hidden' name="items[{{$index}}][good_id]" value="{{$item->good_id}}"/>
+                                                <input type='hidden' name="items[{{$index}}][problem]" value="{{$item->probelm}}"/>
+                                                <input type='hidden' name="items[{{$index}}[note]" value="{{$item->note}}"/>
+                                                <input type='hidden' name="items[{{$index}}][price]" value="{{$item->price}}"/>
+                                                {{ $item->good->name ?? '-'}}
+                                            </td>
+                                            <td>{{$item->problem}}</td>
+                                            <td>{{$item->note}}</td>
+                                            <td class="text-end">{{ number_format($item->price) }}</td>
+                                            <td class='text-center'>
+                                                <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
+                                                    <i class='bi bi-x'></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-center">GRANDTOTAL</th>
+                                    <th id="total" class="text-end">{{ number_format($problem->items()->sum('price')) }}</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
 
                 <div class="d-flex justify-content-end align-items-center">
                     <a href="{{ route('problems.index') }}" class="btn border me-2">Kembali</a>
