@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Location;
+use App\Sarana\Html\Table;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
@@ -14,10 +15,34 @@ class LocationController extends Controller
      */
     public function index(Request $request)
     {
-        $locations = Location::when($request->s, function($query, $keyword){
-            return $query->where('name', 'LIKE', "%{$keyword}%");
-        })->paginate(20);
-        return view('locations.index', compact('locations'));
+        
+        $table = (new Table)
+            ->setModel(Location::class)
+            ->filters([
+                's' => function($query, $keyword){
+                    return $query->where('name', 'LIKE', "%{$keyword}%");
+                }
+            ])
+            ->columns([
+                [
+                    'label' => 'Nama',
+                    'name' => 'name',
+                    'callback' => function($row) {
+                        return "{$row->name}
+                        <div class=\"d-flex align-items-center tr-actions\">
+                            <a href=\"" . route('locations.edit', $row) . "\" class=\"text-decoration-none\">Edit</a>
+                            <form action=\"" . route('locations.destroy', $row) . "\" method=\"POST\" class=\"ms-2\">
+                                <input type=\"hidden\" name=\"_token\" value=\"" . csrf_token() . "\">
+                                <input type=\"hidden\" name=\"_method\" value=\"DELETE\">
+                                <button class=\"btn p-0 text-danger\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
+                            </form>
+                        </div>";
+                    }
+                ]
+            ])
+            ->render();
+
+        return view('locations.index', compact('table'));
     }
 
     /**

@@ -89,16 +89,18 @@ class Table
             $this->model = $this->model->when(request($key), $filter);
         }
 
-        return $this->model->when(request('sort'), function($query, $sort){
+        $data = $this->model->when(request('sort'), function($query, $sort){
             return $query->orderBy($sort, request('sortBy'));
         }, function($query){
             $query->orderBy('created_at', 'DESC');
         })->paginate($this->posts_per_page) ?? [];
+
+        return $data;
     }
 
     public function setModel($model)
     {
-        $this->model = $model;
+        $this->model = new $model;
         return $this;
     }
 
@@ -114,4 +116,5 @@ class Table
             'models' => $this->getData()
         ])->render();
     }
+
 }

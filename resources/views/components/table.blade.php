@@ -39,7 +39,7 @@
                 </tr>
             @endforeach
         </tbody>
-        
+
             <tfoot>
                 <tr>
                     @foreach ($columns as $column)

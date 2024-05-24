@@ -11,13 +11,13 @@
             <form action="">
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <input name="s" type="text" class="form-control" placeholder="Masukan keyword..." value="{{ request('s') }}">
+                        <input name="s" type="text" class="form-control form-control-lg rounded-pill" placeholder="Masukan keyword..." value="{{ request('s') }}">
                     </div>
 
                     <div class="col-md-4"></div>
 
-                    <div class="col-md-4 d-flex justify-content-end">
-                        <a href="{{ route('locations.create') }}" class="btn btn-primary">Tambah</a>
+                    <div class="col-md-4 d-flex align-items-center justify-content-end">
+                        <a href="{{ route('locations.create') }}" class="btn btn-lg btn-primary rounded-pill">Tambah</a>
                     </div>
                 </div>
             </form>
@@ -29,7 +29,9 @@
             </div>
             @endif
 
-            <div class="table-responsive">
+            {!! $table !!}
+
+            {{-- <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -59,7 +61,7 @@
                 <div class="d-flex justify-content-end">
                     {{$locations->links()}}
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

@@ -11,13 +11,13 @@
             <form action="">
                 <div class="row align-items-center mb-3">
                     <div class="col-md-4">
-                        <input name="s" type="text" class="form-control form-control-lg" placeholder="Masukan keyword..." value="{{ request('s') }}">
+                        <input name="s" type="text" class="form-control form-control-lg rounded-pill" placeholder="Masukan keyword..." value="{{ request('s') }}">
                     </div>
 
                     <div class="col-md-4"></div>
 
-                    <div class="col-md-4 d-flex justify-content-end">
-                        <a href="{{ route('problems.create') }}" class="btn btn-lg btn-primary">Tambah</a>
+                    <div class="col-md-4 d-flex align-items-center justify-content-end">
+                        <a href="{{ route('problems.create') }}" class="btn btn-lg btn-primary rounded-pill">Tambah</a>
                     </div>
                 </div>
             </form>
