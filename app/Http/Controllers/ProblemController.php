@@ -8,10 +8,19 @@ use App\Sarana\Html\Table;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Services\ProblemService;
 
 
 class ProblemController extends Controller
 {
+
+    public $problem_service;
+
+    public function __construct(ProblemService $problem_service)
+    {
+        $this->problem_service = $problem_service;
+    }
 
 
     public function tableField()
@@ -142,6 +151,12 @@ class ProblemController extends Controller
     {
         $problem = new Problem();
         $goods = Good::orderBy('name', 'ASC')->get();
+
+        if(Auth::user()->hasRole('guru'))
+        {
+            return view('problems.form-' . Str::lower(Auth::user()->role->name), compact('problem', 'goods'));
+        }
+
         return view('problems.form', compact('problem', 'goods'));
     }
 

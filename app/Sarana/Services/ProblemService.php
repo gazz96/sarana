@@ -6,17 +6,24 @@ use App\Models\Problem;
 use App\Models\ProblemItem;
 use Illuminate\Support\Facades\Request;
 
+
 class ProblemService
 {
 
     public $problem;
     public $items = [];
     public $request;
+    public $scope;
 
-    public function __construct($data)
+    public function __construct($data = [])
     {
         $this->problem = new Problem();
-        $this->problem->create($data);
+        
+        if($data)
+        {
+            $this->problem->create($data);
+        }
+       
     }
     
 
@@ -42,10 +49,25 @@ class ProblemService
 
     }
 
+    public function scope($scope)
+    {
+        $this->scope = $scope;
+        return $this;
+    }
+
+    public function saveByScope()
+    {
+        if($this->scope == "guru")
+        {
+            
+        }
+    }
+
+    public function 
+
     public function validated()
     {
 
     }
-
 
 }

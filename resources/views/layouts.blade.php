@@ -152,6 +152,33 @@
                   
                     @endif
 
+
+                    @if(auth()->user()->hasRole('guru'))
+
+                    <li class="sidebar-item">
+                        <a href="{{url('dashboard')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    
+                    <li class="sidebar-item">
+                        <a href="{{route('problems.index')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+                            <span>Masalah</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a href="{{route('profile')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                  
+                    @endif
+
                 </ul>
 
                
