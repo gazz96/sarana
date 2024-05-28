@@ -27,6 +27,8 @@
     <link href="{{ url('css/custom-main.css') }}" rel="stylesheet">
     <link href="{{ url('appstack/css/app.css') }}" rel="stylesheet">
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <!-- BEGIN SETTINGS -->
     <!-- Remove this after purchasing -->
     {{-- <script src="{{ url('appstack/js/settings.js') }}"></script> --}}
@@ -51,7 +53,7 @@
                         Navigasi
                     </li>
                    
-                    @if(auth()->user()->hasRole('super user'))
+                    @if(auth()->user()->hasRole(['admin', 'super user']))
 
                     <li class="sidebar-item">
                         <a href="{{url('dashboard')}}" class="sidebar-link">
@@ -148,6 +150,49 @@
                             <i class="align-middle text-body" data-lucide="user-check"></i>
                             <span>Profile</span>
                         </a>
+                    </li>
+                  
+                    @endif
+
+                    @if(auth()->user()->hasRole(['lembaga', 'keuangan']))
+
+                    <li class="sidebar-item">
+                        <a href="{{url('dashboard')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    
+                    <li class="sidebar-item">
+                        <a href="{{route('problems.index')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+                            <span>Masalah</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a href="{{route('profile')}}" class="sidebar-link">
+                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a data-bs-target="#navbar-reports" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                            <i class="align-middle" data-lucide="pie-chart"></i> <span
+                                class="align-middle">Laporan</span>
+                            {{-- <span class="badge badge-sidebar-primary">5</span> --}}
+                        </a>
+                        <ul id="navbar-reports" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{route('reports.problem')}}">Masalah</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="{{route('reports.finance')}}">Keuangan</a>
+                            </li>
+                            {{-- <li class="sidebar-item"><a class="sidebar-link" href="{{route('settings.approval')}}">Persetujuan</a></li> --}}
+                        </ul>
                     </li>
                   
                     @endif
@@ -428,6 +473,7 @@
 
     <script src="{{ url('appstack/js/jquery.min.js') }}"></script>
     <script src="{{ url('appstack/js/app.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     @yield('footer')
     

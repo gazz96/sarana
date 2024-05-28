@@ -35,7 +35,6 @@
                                 @foreach($roles as $role)
                                 <option value="{{$role->id}}" {{$user->role_id == $role->id ? 'selected' : ''}}>{{$role->name}}</option>
                                 @endforeach
-                                <option value="30">tidak ada</option>
                             </select>
                             @error('role_id')
                             <span class="invalid-feedback d-block">{{$message}}</span>

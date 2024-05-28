@@ -60,10 +60,11 @@ class User extends Authenticatable
         {
             foreach($name as $n)
             {
-                if($n == $current_role) {
+                if(strtoupper($n) == $current_role) {
                     return true;
                 }
             }
+            return false;
         }
         $name = strtoupper($name);     
         return $name == $current_role;

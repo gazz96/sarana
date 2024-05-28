@@ -38,6 +38,13 @@ Route::middleware('auth')->group(function(){
     Route::resource('users', UserController::class);
     Route::resource('goods', GoodController::class);
     Route::resource('locations', LocationController::class);
+
+    Route::get('problems/submit/{problem}/management-approval', [ProblemController::class, 'managementApproval'])->name('problems.management-approval');
+    Route::get('problems/submit/{problem}', [ProblemController::class, 'submitProblem'])->name('problems.submit');
+    Route::get('problems/submit/{problem}/accept', [ProblemController::class, 'acceptProblem'])->name('problems.accept');
+    Route::get('problems/submit/{problem}/cancel', [ProblemController::class, 'cancelProblem'])->name('problems.cancel');
+    Route::get('problems/submit/{problem}/finish', [ProblemController::class, 'finishProblem'])->name('problems.finish');
+    Route::get('problems/submit/{problem}/approve', [ProblemController::class, 'approveProblem'])->name('problems.approve');
     Route::get('problems/print/{problem}', [ProblemController::class, 'print'])->name('problems.print');
     Route::resource('problems', ProblemController::class);
 

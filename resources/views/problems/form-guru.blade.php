@@ -74,12 +74,10 @@
                                             <td>
                                                 <input type='hidden' name="items[{{$index}}][id]" value=""/>
                                                 <input type='hidden' name="items[{{$index}}][good_id]" value="{{$item->good_id}}"/>
-                                                <input type='hidden' name="items[{{$index}}][problem]" value="{{$item->probelm}}"/>
+                                                <input type='hidden' name="items[{{$index}}][issue]" value="{{$item->issue}}"/>
                                                 {{ $item->good->name ?? '-'}}
                                             </td>
-                                            <td>{{$item->problem}}</td>
-                                            <td>{{$item->note}}</td>
-                                            <td class="text-end">{{ number_format($item->price) }}</td>
+                                            <td>{{$item->issue}}</td>
                                             <td class='text-center'>
                                                 <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
                                                     <i data-lucide="x"></i>
@@ -133,8 +131,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="i-problem">Masalah</label>
-                            <textarea name="problem" id="i-problem" cols="30" rows="5" class="form-control"></textarea>
+                            <label for="i-issue">Masalah</label>
+                            <textarea name="issue" id="i-issue" cols="30" rows="5" class="form-control"></textarea>
                         </div>
 
                         <button class="btn btn-primary" id="btn-add-item">Tambah</button>
@@ -157,9 +155,7 @@
         items.push({
             good_id: "{{$item->good_id}}",
             good_name: "{{$item->good->name ?? '-'}}",
-            problem: "{{$item->problem}}",
-            note: "{{$item->note}}",
-            price: "{{$item->price}}"
+            issue: "{{$item->issue}}",
         })
         @endforeach
     @endif
@@ -171,17 +167,13 @@
                 <td>
                     <input type='hidden' name="items[${index}][id]" value=""/>
                     <input type='hidden' name="items[${index}][good_id]" value="${item.good_id}"/>
-                    <input type='hidden' name="items[${index}][problem]" value="${item.problem}"/>
-                    <input type='hidden' name="items[${index}][note]" value="${item.note}"/>
-                    <input type='hidden' name="items[${index}][price]" value="${item.price}"/>
+                    <input type='hidden' name="items[${index}][issue]" value="${item.issue}"/>
                     ${item.good_name}
                 </td>
-                <td>${item.problem}</td>
-                <td>${item.price}</td>
-                <td>${item.note}</td>
+                <td>${item.issue}</td>
                 <td class='text-center'>
                     <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
-                        <i class='bi bi-x'></i>
+                        HAPUS
                     </button>
                 </td>
             </tr>
@@ -205,7 +197,7 @@
 
     let form_keys = {
         good_id: 'Barang',
-        problem: 'Masalah',
+        issue: 'Masalah',
         note: 'Catatan',
         price: 'Harga'
     }
@@ -219,20 +211,14 @@
         let problem = {
             good_id: form.find('#i-good_id').val(),
             good_name: form.find('#i-good_id').find('option:selected').html(),
-            problem: form.find('#i-problem').val(),
-            note: form.find('#i-note').val(),
-            price: form.find('#i-price').val()
+            issue: form.find('#i-issue').val()
         }
 
         if(addProblem(problem)) {
             tableProblemItems.find('tbody').empty();
-            let total = 0;
             items.map((problem, index) => {
                 tableProblemItems.find('tbody').append(addRow(index, problem));
-                total += problem.price;
             })
-            $('#total').html(total)
-
             form[0].reset();
             $('#modal-item').modal('hide');
             return;
@@ -254,9 +240,7 @@
         let problem = {
             good_id: form.find('#i-good_id').val(),
             good_name: form.find('#i-good_id').find('option:selected').html(),
-            problem: form.find('#i-problem').val(),
-            note: form.find('#i-note').val(),
-            price: form.find('#i-price').val()
+            issue: form.find('#i-issue').val(),
         }
 
         if(addProblem(problem)) {
@@ -278,6 +262,8 @@
 
     $(document).on('click', '.btn-delete-item', function(e){
         e.preventDefault();
+        const index = items.indexOf($(this).parent().parent().index());
+        items.splice(index, 1);
         $(this).parent().parent().remove();
     })
 

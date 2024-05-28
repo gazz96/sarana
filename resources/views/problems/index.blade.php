@@ -15,10 +15,11 @@
                     </div>
 
                     <div class="col-md-4"></div>
-
+                    @if(auth()->user()->hasRole(['admin', 'guru', 'pimpinan', 'super user']))
                     <div class="col-md-4 d-flex align-items-center justify-content-end">
                         <a href="{{ route('problems.create') }}" class="btn btn-lg btn-primary rounded-pill">Tambah</a>
                     </div>
+                    @endif
                 </div>
             </form>
 

@@ -12,7 +12,7 @@ class ProblemItem extends Model
     protected $fillable = [
         'problem_id',
         'good_id',
-        'problem',
+        'issue',
         'price',
         'status',
         'note'

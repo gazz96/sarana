@@ -100,12 +100,12 @@
 
                     <tr>
                         <td>NAMA</td>
-                        <td>: {{ $problem->user->name ?? '-' }}</td>
+                        <td>: {{ strtoupper($problem->user->name ?? '-') }}</td>
                     </tr>
 
                     <tr>
                         <td>JABATAN</td>
-                        <td>: {{ $problem->user->role ?? 'Tata Usaha' }}</td>
+                        <td>: {{ strtoupper($problem->user->role->name ?? '-') }}</td>
                     </tr>
                     
                     <tr>
@@ -132,11 +132,11 @@
                         @foreach ($problem->items()->get() as $item)
                             <tr>
                                 <td>{{ $i++ }}</td>
-                                <td>{{ $item->good->name }}</td>
-                                <td>{{ $item->good_id }}</td>
+                                <td>{{ $item->good->name ?? '-'}}</td>
+                                <td>{{ $item->good->code ?? '-' }}</td>
                                 <td>{{ $item->good->location->name ?? '-' }}</td>
                                 <td class="text-right">{{ number_format($item->price) }}</td>
-                                <td>{{ $item->problem }}</td>
+                                <td>{{ $item->issue }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -170,16 +170,19 @@
             <div class="col-3">
                 <div class="text-center">DIKETAHUI</div>
                 <div style="border-bottom: 1px solid #222; padding-bottom: 80px;"></div>
+                {{ strtoupper($problem->user_management->name ?? '') }}
             </div>
 
             <div class="col-3">
                 <div class="text-center">PETUGAS/TEKNISI</div>
                 <div style="border-bottom: 1px solid #222; padding-bottom: 80px;"></div>
+                {{ strtoupper($problem->technician->name ?? '') }}
             </div>
 
             <div class="col-3">
                 <div class="text-center">KEPALA BIDANG KEUANGAN</div>
                 <div style="border-bottom: 1px solid #222; padding-bottom: 80px;"></div>
+                {{ strtoupper($problem->finance->name ?? '') }}
             </div>
 
             

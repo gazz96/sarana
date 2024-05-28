@@ -29,17 +29,17 @@
                         <div class="row mb-3">
                             <div class="mb-3 col-md-3">
                                 <label for="i-kode">Kode</label>
-                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}">
+                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}" disabled>
                             </div>
 
                             <div class="mb-3 col-md-3">
                                 <label for="i-date">Tanggal</label>
-                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}">
+                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}" disabled>
                             </div>
             
                             <div class="mb-3 col-md-3">
                                 <label for="i-user_id">Permintaan</label>
-                                <input type="text" class="form-control" id="i-user_id" disabled value="{{auth()->user()->email}}">
+                                <input type="text" class="form-control" id="i-user_id" disabled value="{{$problem->user->name ?? '-'}}">
                             </div>
             
                             <div class="mb-3 col-md-3">
@@ -66,7 +66,6 @@
                                     <th class="text-center">MASALAH</th>
                                     <th class="text-center">NOTE</th>
                                     <th class="text-center">BIAYA PERBAIKAN</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -76,18 +75,15 @@
                                             <td>
                                                 <input type='hidden' name="items[{{$index}}][id]" value=""/>
                                                 <input type='hidden' name="items[{{$index}}][good_id]" value="{{$item->good_id}}"/>
-                                                <input type='hidden' name="items[{{$index}}][issue]" value="{{$item->issue}}"/>
-                                                <input type='hidden' name="items[{{$index}}[note]" value="{{$item->note}}"/>
-                                                <input type='hidden' name="items[{{$index}}][price]" value="{{$item->price}}"/>
+                                                <input type='hidden' name="items[{{$index}}][problem]" value="{{$item->issue}}"/>
                                                 {{ $item->good->name ?? '-'}}
                                             </td>
                                             <td>{{$item->issue}}</td>
-                                            <td>{{$item->note}}</td>
-                                            <td class="text-end">{{ number_format($item->price) }}</td>
-                                            <td class='text-center'>
-                                                <button type='button' class='btn btn-sm btn-danger btn-delete-item'>
-                                                    <i data-lucide="x"></i>
-                                                </button>
+                                            <td>
+                                                <textarea name="items[{{$index}}][note]" class="form-control">{{$item->note}}</textarea>
+                                            </td>
+                                            <td class="text-end" style="width: 200px;">
+                                                <input type="number" name="items[{{$index}}][price]" value="{{$item->price}}" class="form-control" />
                                             </td>
                                         </tr>
                                     @endforeach
@@ -107,10 +103,10 @@
 
                 <div class="d-flex justify-content-end align-items-center">
                     <a href="{{ route('problems.index') }}" class="btn border me-2">Kembali</a>
-                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modal-item">
+                    {{-- <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modal-item">
                         <i class="bi bi-plus me-1"></i>
                         Tambah Barang
-                    </button>
+                    </button> --}}
                     <button type="submit" class="btn btn-success me-2">
                         <i class="bi bi-save me-1"></i>
                         Simpan
@@ -138,14 +134,14 @@
                             <select name="good_id" id="i-good_id" class="form-control">
                                 <option value="">Pilih Barang</option>
                                 @foreach($goods as $good)
-                                <option value="{{$good->id}}">{{$good->name}} -  {{$good->location->name ?? '-'}}</option>
+                                <option value="{{$good->id}}">{{$good->name}}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="i-issue">Masalah</label>
-                            <textarea name="issue" id="i-issue" cols="30" rows="5" class="form-control"></textarea>
+                            <label for="i-problem">Masalah</label>
+                            <textarea name="problem" id="i-problem" cols="30" rows="5" class="form-control"></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -178,7 +174,7 @@
         items.push({
             good_id: "{{$item->good_id}}",
             good_name: "{{$item->good->name ?? '-'}}",
-            issue: "{{$item->issue}}",
+            problem: "{{$item->problem}}",
             note: "{{$item->note}}",
             price: "{{$item->price}}"
         })
@@ -192,12 +188,12 @@
                 <td>
                     <input type='hidden' name="items[${index}][id]" value=""/>
                     <input type='hidden' name="items[${index}][good_id]" value="${item.good_id}"/>
-                    <input type='hidden' name="items[${index}][issue]" value="${item.issue}"/>
+                    <input type='hidden' name="items[${index}][problem]" value="${item.problem}"/>
                     <input type='hidden' name="items[${index}][note]" value="${item.note}"/>
                     <input type='hidden' name="items[${index}][price]" value="${item.price}"/>
                     ${item.good_name}
                 </td>
-                <td>${item.issue}</td>
+                <td>${item.problem}</td>
                 <td>${item.price}</td>
                 <td>${item.note}</td>
                 <td class='text-center'>
@@ -226,7 +222,7 @@
 
     let form_keys = {
         good_id: 'Barang',
-        issue: 'Masalah',
+        problem: 'Masalah',
         note: 'Catatan',
         price: 'Harga'
     }
@@ -240,7 +236,7 @@
         let problem = {
             good_id: form.find('#i-good_id').val(),
             good_name: form.find('#i-good_id').find('option:selected').html(),
-            issue: form.find('#i-issue').val(),
+            problem: form.find('#i-problem').val(),
             note: form.find('#i-note').val(),
             price: form.find('#i-price').val()
         }

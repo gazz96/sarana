@@ -9,13 +9,13 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use App\Services\ProblemService;
+use App\Sarana\Services\ProblemService;
 
 
 class ProblemController extends Controller
 {
 
-    public $problem_service;
+    protected $problem_service;
 
     public function __construct(ProblemService $problem_service)
     {
@@ -34,6 +34,7 @@ class ProblemController extends Controller
                 {
                     return "{$row->code}
                         <div class=\"d-flex align-items-center tr-actions\">
+                            <a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a> 
                             <a href=\"". route('problems.print', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Cetak</a> 
                             <a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none mx-2\">Edit</a>
                             <form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"mx-2\">
@@ -51,6 +52,7 @@ class ProblemController extends Controller
                     return $row->user->name ?? '-';
                 }
             ],
+            
             [
                 'name' => 'date',
                 'label' => 'Tanggal',
@@ -73,16 +75,276 @@ class ProblemController extends Controller
 
         if(Auth::user()->hasRole('teknisi'))
         {
+
             return [
                 [
                     'name' => 'code',
                     'label' => 'Kode',
                     'callback' => function($row)
                     {
-                        return "{$row->code}
-                            <div class=\"d-flex align-items-center tr-actions\"> 
-                                <a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>
-                            </div>";
+                        $submit_html = $edit_html = $delete_html = $show_html = $cancel_html = $accept_html = "";
+                        $show_html = "<a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>";
+
+                        if($row->status === 1) 
+                        {
+                            $submit_html = "<a href=\"". route('problems.accept', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Terima</a>";
+                        }
+                        
+                        if($row->status === 2 )
+                        {
+                            $edit_html = "<a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none me-2\">Edit</a>";
+                            $delete_html = "<a href=\"". route('problems.cancel', $row) . "\" class=\"text-decoration-none me-2 text-danger\" onclick=\"return confirm('Batalkan???')\">Batalkan</a>";
+
+                            if(!$row->user_management_id)
+                            {
+                                $accept_html = "<a href=\"". route('problems.management-approval', $row) . "\" class=\"text-decoration-none me-2 text-primary\" onclick=\"return confirm('Yakin ingin mengajukan harga ???')\">Ajukan</a>";
+                            }
+                            
+                        }
+
+                        if($row->status == 5)
+                        {
+                            $accept_html = "<a href=\"". route('problems.finish', $row) . "\" class=\"text-decoration-none me-2 text-success\" onclick=\"return confirm('Yakin sudah selesai ???')\">Tandai sebagai selesai</a>";
+                        }
+
+                        $html = $show_html . $submit_html . $edit_html . $accept_html . $delete_html;
+                        
+                        return "
+                            {$row->code}
+                            <div class=\"d-flex align-items-center tr-actions\">
+                                {$html}
+                            </div>
+                        ";
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Permintaan',
+                    'callback' => function($row) {
+                        return $row->user->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Lembaga',
+                    'callback' => function($row) {
+                        return $row->user_management->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Admin',
+                    'callback' => function($row) {
+                        return $row->admin->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Keuangan',
+                    'callback' => function($row) {
+                        return $row->finance->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'date',
+                    'label' => 'Tanggal',
+                    'callback' => function($row) {
+                        return date('d F Y H:i:s', strtotime($row->date));
+                    }
+                ],
+                [
+                    'name' => 'total',
+                    'label' => 'Total',
+                    'callback' => function($row) {
+                        return number_format($row->items()->sum('price'));
+                    }
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'Status',
+                    'callback' => function($row ){
+                        if($row->status == 5 && $row->user_management_id) {
+                            return "MULAI BEKERJA";
+                        }
+                        return \App\Models\Problem::$STATUS[$row->status ] ?? '';
+                    }
+                ]
+            ];
+        }
+
+        if(Auth::user()->hasRole('guru'))
+        {
+            return [
+                [
+                    'name' => 'code',
+                    'label' => 'Kode',
+                    'callback' => function($row)
+                    {
+
+                        $submit_html = $edit_html = $delete_html = $show_html = "";
+
+                        if($row->status === 0) 
+                        {
+                            $submit_html = "<a href=\"". route('problems.submit', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Ajukan</a>";
+                            $edit_html = "<a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none me-2\">Edit</a>";
+                            $delete_html = "<form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"mx-2\">
+                                <input type=\"hidden\" name=\"_token\" value=\"" . csrf_token() . "\" />
+                                <input type=\"hidden\" name=\"_method\" value=\"DELETE\">
+                                <button class=\"btn p-0 text-danger\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
+                            </form>";
+                        }
+                        else 
+                        {
+                            //$show_html = "<a href=\"". route('problems.show', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Lihat</a>";
+                        }
+
+
+
+                        $html = $show_html . $submit_html . $edit_html . $delete_html;
+                        
+                        return "
+                            {$row->code}
+                            <div class=\"d-flex align-items-center tr-actions\">
+                                {$html}
+                            </div>
+                        ";
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Permintaan',
+                    'callback' => function($row) {
+                        return $row->user->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'date',
+                    'label' => 'Tanggal',
+                    'callback' => function($row) {
+                        return date('d F Y H:i:s', strtotime($row->date));
+                    }
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'Status',
+                    'callback' => function($row ){
+                        return \App\Models\Problem::$STATUS[$row->status ] ?? '';
+                    }
+                ]
+            ];
+        }
+
+        if(Auth::user()->hasRole('admin'))
+        {
+
+            return [
+                [
+                    'name' => 'code',
+                    'label' => 'Kode',
+                    'callback' => function($row)
+                    {
+                        $submit_html = $edit_html = $delete_html = $show_html = $cancel_html = $accept_html = "";
+                        $show_html = "<a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>";
+
+                        if($row->status === 3 && $row->user_management_id && !$row->admin_id)
+                        {
+                            $accept_html = "<a href=\"". route('problems.approve', $row) . "\" class=\"text-decoration-none me-2 text-success\" onclick=\"return confirm('Berikan persetujuan ???')\">Approve</a>";
+                        }
+
+                        $html = $show_html . $submit_html . $edit_html . $accept_html . $delete_html;
+                        
+                        return "
+                            {$row->code}
+                            <div class=\"d-flex align-items-center tr-actions\">
+                                {$html}
+                            </div>
+                        ";
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Permintaan',
+                    'callback' => function($row) {
+                        return $row->user->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Lembaga',
+                    'callback' => function($row) {
+                        return $row->user_management->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Admin',
+                    'callback' => function($row) {
+                        return $row->admin->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Keuangan',
+                    'callback' => function($row) {
+                        return $row->finance->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'date',
+                    'label' => 'Tanggal',
+                    'callback' => function($row) {
+                        return date('d F Y H:i:s', strtotime($row->date));
+                    }
+                ],
+                [
+                    'name' => 'total',
+                    'label' => 'Total',
+                    'callback' => function($row) {
+                        return number_format($row->items()->sum('price'));
+                    }
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'Status',
+                    'callback' => function($row ){
+                        return \App\Models\Problem::$STATUS[$row->status ] ?? '';
+                    }
+                ]
+            ];
+        }
+
+        if(Auth::user()->hasRole('lembaga'))
+        {
+
+            return [
+                [
+                    'name' => 'code',
+                    'label' => 'Kode',
+                    'callback' => function($row)
+                    {
+                        $submit_html = $edit_html = $delete_html = $show_html = $cancel_html = $accept_html = "";
+                        $show_html = "
+                            <a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>
+                            <a href=\"". route('problems.print', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Cetak</a>
+                        ";
+
+                        if($row->status === 5)
+                        {
+                            if(!$row->user_management_id)
+                            {
+                                $accept_html = "<a href=\"". route('problems.approve', $row) . "\" class=\"text-decoration-none me-2 text-success\" onclick=\"return confirm('Yakin sudah selesai???')\">Approve</a>";
+                            }
+                            
+                        }
+
+                        $html = $show_html . $submit_html . $edit_html . $accept_html . $delete_html;
+                        
+                        return "
+                            {$row->code}
+                            <div class=\"d-flex align-items-center tr-actions\">
+                                {$html}
+                            </div>
+                        ";
                     }
                 ],
                 [
@@ -110,11 +372,105 @@ class ProblemController extends Controller
                     'name' => 'status',
                     'label' => 'Status',
                     'callback' => function($row ){
+                        if($row->user_management_id) {
+                            return "MULAI BEKERJA";
+                        }
                         return \App\Models\Problem::$STATUS[$row->status ] ?? '';
                     }
                 ]
             ];
         }
+
+        if(Auth::user()->hasRole('keuangan'))
+        {
+
+            return [
+                [
+                    'name' => 'code',
+                    'label' => 'Kode',
+                    'callback' => function($row)
+                    {
+                        $submit_html = $edit_html = $delete_html = $show_html = $cancel_html = $accept_html = "";
+                        $show_html = "
+                            <a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>
+                            <a href=\"". route('problems.print', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Cetak</a>
+                        ";
+
+                        if($row->status === 3)
+                        {
+                            if($row->user_management_id && $row->admin_id && !$row->user_finance_id)
+                            {
+                                $accept_html = "<a href=\"". route('problems.approve', $row) . "\" class=\"text-decoration-none me-2 text-success\" onclick=\"return confirm('Bayar Invoice ???')\">Approve</a>";
+                            }
+                            
+                        }
+
+                        $html = $show_html . $submit_html . $edit_html . $accept_html . $delete_html;
+                        
+                        return "
+                            {$row->code}
+                            <div class=\"d-flex align-items-center tr-actions\">
+                                {$html}
+                            </div>
+                        ";
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Permintaan',
+                    'callback' => function($row) {
+                        return $row->user->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Lembaga',
+                    'callback' => function($row) {
+                        return $row->user_management->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Admin',
+                    'callback' => function($row) {
+                        return $row->admin->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'user',
+                    'label' => 'Keuangan',
+                    'callback' => function($row) {
+                        return $row->finance->name ?? '-';
+                    }
+                ],
+                [
+                    'name' => 'date',
+                    'label' => 'Tanggal',
+                    'callback' => function($row) {
+                        return date('d F Y H:i:s', strtotime($row->date));
+                    }
+                ],
+                [
+                    'name' => 'total',
+                    'label' => 'Total',
+                    'callback' => function($row) {
+                        return number_format($row->items()->sum('price'));
+                    }
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'Status',
+                    'callback' => function($row ){
+                        if($row->status == 5 && $row->user_management_id) {
+                            return "MULAI BEKERJA";
+                        }
+                        return \App\Models\Problem::$STATUS[$row->status ] ?? '';
+                    }
+                ]
+            ];
+        }
+
+
 
 
         return $columns;
@@ -130,6 +486,15 @@ class ProblemController extends Controller
     {
 
         $table = (new Table)
+            ->applys([
+                'showOnlyForTechincian' => function($query) use($request)
+                {
+                    if(Auth::user()->hasRole('teknisi'))
+                    {
+                        return $query->whereNotIn('status', [0]);
+                    }
+                }
+            ])
             ->filters([
                 's' => function($query, $keyword) {
                     return $query->where('code', 'LIKE', '%' . $keyword . '%');
@@ -152,8 +517,7 @@ class ProblemController extends Controller
         $problem = new Problem();
         $goods = Good::orderBy('name', 'ASC')->get();
 
-        if(Auth::user()->hasRole('guru'))
-        {
+        if(Auth::user()->hasRole('guru')) {
             return view('problems.form-' . Str::lower(Auth::user()->role->name), compact('problem', 'goods'));
         }
 
@@ -168,36 +532,10 @@ class ProblemController extends Controller
      */
     public function store(Request $request)
     {
-
-        $validated = $request->validate([
-            'date' => 'required',
-            'code' => 'nullable',
-            'items' => 'required'
-        ]);
-
-        if(!$validated['code'])
-        {
-            $validated['code'] = Problem::generateLetterNumber('PRB');
-        }
-
-        $validated['status'] = 0;
-
-        $problem = Auth::user()
-            ->problems()
-            ->create($validated);
-
-        $items = collect($validated['items']);
-
-        $items->map(function($item, $key) use($problem) {
-            $item['status'] = 0;
-            $problem
-                ->items()
-                ->create($item);
-        });
-
-        $problem->items()
-            ->whereNotIn('good_id', $items->pluck('good_id'))
-            ->delete();
+        $this->problem_service
+            ->fromRequest($request)
+            ->scope(Auth::user()->role->name ?? '')
+            ->save();
 
         return redirect(route('problems.index'))
             ->with('status', 'success')
@@ -212,7 +550,7 @@ class ProblemController extends Controller
      */
     public function show(Problem $problem)
     {
-        //
+        return view('problems.show', compact('problem'));
     }
 
     /**
@@ -223,8 +561,18 @@ class ProblemController extends Controller
      */
     public function edit(Problem $problem)
     {
+        
+
         $goods = Good::orderBy('name', 'ASC')->get();
-        return view('problems.teknisi-form', compact('problem', 'goods'));
+        
+        if(Auth::user()->hasRole('teknisi')) 
+        {   
+            abort_if($problem->status != 2, '403', 'You don\'t have access to this page');
+            
+            return view('problems.form-' . Str::lower(Auth::user()->role->name), compact('problem', 'goods'));
+        }
+
+        return view('problems.form', compact('problem', 'goods'));
     }
 
     /**
@@ -236,39 +584,10 @@ class ProblemController extends Controller
      */
     public function update(Request $request, Problem $problem)
     {
-        $validated = $request->validate([
-            'date' => 'required',
-            'code' => 'nullable',
-            'items' => 'required'
-        ]);
-
-        if(!$validated['code'])
-        {
-            $validated['code'] = Problem::generateLetterNumber('PRB');
-        }
-
-        $validated['status'] = 0;
-
-        $problem->update($validated);
-
-        $items = collect($validated['items']);
-
-        $items->map(function($item, $key) use($problem) {
-            $item['status'] = 0;
-            $problem
-                ->items()
-                ->updateOrCreate(
-                    [
-                        'problem_id' => $problem->id,
-                        'good_id' => $item['good_id']
-                    ],
-                    $item
-                );
-        });
-
-        $problem->items()
-            ->whereNotIn('good_id', $items->pluck('good_id'))
-            ->delete();
+        $this->problem_service
+            ->fromRequest($request)
+            ->scope(Auth::user()->role->name ?? '')
+            ->save($problem);
 
         return back()
             ->with('status', 'success')
@@ -298,5 +617,92 @@ class ProblemController extends Controller
     public function print(Problem $problem)
     {
         return view('problems.print', compact('problem'));
+    }
+
+    public function submitProblem(Problem $problem)
+    {
+        
+        $problem->update([
+            'status' => 1
+        ]);
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Masalah sudah diajukan ke teknisi');
+    }
+
+    public function acceptProblem(Problem $problem)
+    {
+        $problem->update([
+            'status' => 2,
+            'user_technician_id' => Auth::id()
+        ]);
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Anda akan menangani kendala ini');
+    }
+
+    public function cancelProblem(Problem $problem)
+    {
+        $problem->update([
+            'status' => 1
+        ]);
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Anda membatalkan menangani kendala ini');
+    }
+
+    public function finishProblem(Problem $problem)
+    {
+        $problem->update([
+            'status' => 3
+        ]);
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Berhasil disimpan, pekerjaan anda akan di approve setelah dilakukan pemeriksaan');
+    }
+
+    public function managementApproval(Problem $problem)
+    {
+        $problem->update([
+            'status' => 5
+        ]);
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Berhasil disimpan, pekerjaan anda akan di approve setelah dilakukan pemeriksaan');
+    }
+
+    public function approveProblem(Problem $problem)
+    {
+
+        if(Auth::user()->hasRole('lembaga'))
+        {
+            $problem->update([
+                'user_management_id' => Auth::id()
+            ]);
+        }
+
+        if(Auth::user()->hasRole('keuangan'))
+        {
+            $problem->update([
+                'user_finance_id' => Auth::id()
+            ]);
+        }
+
+        if(Auth::user()->hasRole('admin'))
+        {
+            $problem->update([
+                'admin_id' => Auth::id()
+            ]);
+        }
+        
+
+        return back()
+            ->with('status', 'success')
+            ->with('message', 'Anda telah memberikan persetujuan');
     }
 }

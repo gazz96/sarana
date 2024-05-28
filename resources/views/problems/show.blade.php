@@ -29,12 +29,12 @@
                         <div class="row mb-3">
                             <div class="mb-3 col-md-3">
                                 <label for="i-kode">Kode</label>
-                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}" readonly>
+                                <input name="code" type="text" class="form-control" id="i-kode" placeholder="Kosongkan untuk nomor otomatis" value="{{old('code', $problem->code)}}" disabled>
                             </div>
 
                             <div class="mb-3 col-md-3">
                                 <label for="i-date">Tanggal</label>
-                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}" readonly>
+                                <input name="date" type="date" class="form-control" id="i-date" placeholder="" value="{{old('date', $problem->date ?? date('Y-m-d'))}}" disabled>
                             </div>
             
                             <div class="mb-3 col-md-3">
@@ -66,7 +66,6 @@
                                     <th class="text-center">MASALAH</th>
                                     <th class="text-center">NOTE</th>
                                     <th class="text-center">BIAYA PERBAIKAN</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,16 +73,12 @@
                                     @foreach($problem->items()->get() as $index => $item)
                                         <tr>
                                             <td>
-                                                <input type='hidden' name="items[{{$index}}][id]" value=""/>
-                                                <input type='hidden' name="items[{{$index}}][good_id]" value="{{$item->good_id}}"/>
-                                                <input type='hidden' name="items[{{$index}}][problem]" value="{{$item->probelm}}"/>
-                                                <input type='hidden' name="items[{{$index}}[note]" value="{{$item->note}}"/>
-                                                <input type='hidden' name="items[{{$index}}][price]" value="{{$item->price}}"/>
                                                 {{ $item->good->name ?? '-'}}
                                             </td>
-                                            <td>{{$item->problem}}</td>
+                                            <td>{{$item->issue}}</td>
                                             <td>{{$item->note}}</td>
                                             <td class="text-end">{{ number_format($item->price) }}</td>
+                                            
                                         </tr>
                                     @endforeach
                                 @endif
@@ -101,15 +96,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center">
-                    <a href="{{ route('problems.index') }}" class="btn border me-2">Kembali</a>
-                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modal-item">
-                        <i class="bi bi-plus me-1"></i>
-                        Tambah Barang
-                    </button>
-                    <button type="submit" class="btn btn-success me-2">
-                        <i class="bi bi-save me-1"></i>
-                        Simpan
-                    </button>
+                    <a href="{{ route('problems.index') }}" class="btn btn-outline-secondary me-2">Kembali</a>
+                   
                 </div>
 
             </div>
@@ -118,48 +106,6 @@
 
     </form>
 
-    <!-- Modal -->
-    <div class="modal fade" id="modal-item" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Item</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" id="form-problem_item">
-                        <div class="mb-3">
-                            <label for="i-good_id">Barang</label>
-                            <select name="good_id" id="i-good_id" class="form-control">
-                                <option value="">Pilih Barang</option>
-                                @foreach($goods as $good)
-                                <option value="{{$good->id}}">{{$good->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="i-problem">Masalah</label>
-                            <textarea name="problem" id="i-problem" cols="30" rows="5" class="form-control"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="i-note">Note</label>
-                            <textarea name="note" id="i-note" cols="30" rows="5" class="form-control"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="i-price">Biaya Perbaikan</label>
-                            <input name="price" type="number" class="form-control" id="i-price">
-                        </div>
-
-                        <button class="btn btn-primary" id="btn-add-item">Tambah</button>
-                        <button class="btn btn-primary" id="btn-add-more-item">Tambah & Buat Lagi</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 
