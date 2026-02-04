@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoodController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -38,6 +39,15 @@ Route::middleware('auth')->group(function(){
     Route::resource('users', UserController::class);
     Route::resource('goods', GoodController::class);
     Route::resource('locations', LocationController::class);
+
+    // Notification routes
+    Route::prefix('notifications')->group(function(){
+        Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
+        Route::post('/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+    });
 
     Route::get('problems/submit/{problem}/management-approval', [ProblemController::class, 'managementApproval'])->name('problems.management-approval');
     Route::get('problems/submit/{problem}', [ProblemController::class, 'submitProblem'])->name('problems.submit');

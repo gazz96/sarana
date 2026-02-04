@@ -10,16 +10,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Sarana\Services\ProblemService;
+use App\Services\NotificationService;
 
 
 class ProblemController extends Controller
 {
 
     protected $problem_service;
+    protected NotificationService $notificationService;
 
     public function __construct(ProblemService $problem_service)
     {
         $this->problem_service = $problem_service;
+        $this->notificationService = new NotificationService();
     }
 
 
@@ -621,9 +624,15 @@ class ProblemController extends Controller
 
     public function submitProblem(Problem $problem)
     {
-        
+        $oldStatus = $problem->status;
         $problem->update([
             'status' => 1
+        ]);
+        
+        // Notify about problem submission
+        $this->notificationService->notifyWorkflowChange($problem, 'problem_submitted', [
+            'old_status' => $oldStatus,
+            'new_status' => 1
         ]);
 
         return back()
@@ -633,9 +642,17 @@ class ProblemController extends Controller
 
     public function acceptProblem(Problem $problem)
     {
+        $oldStatus = $problem->status;
         $problem->update([
             'status' => 2,
             'user_technician_id' => Auth::id()
+        ]);
+        
+        // Notify about problem acceptance
+        $this->notificationService->notifyWorkflowChange($problem, 'problem_accepted', [
+            'old_status' => $oldStatus,
+            'new_status' => 2,
+            'technician_id' => Auth::id()
         ]);
 
         return back()
@@ -656,8 +673,15 @@ class ProblemController extends Controller
 
     public function finishProblem(Problem $problem)
     {
+        $oldStatus = $problem->status;
         $problem->update([
             'status' => 3
+        ]);
+        
+        // Notify about problem completion
+        $this->notificationService->notifyWorkflowChange($problem, 'problem_finished', [
+            'old_status' => $oldStatus,
+            'new_status' => 3
         ]);
 
         return back()

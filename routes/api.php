@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// For testing with current session authentication
+Route::middleware('web')->group(function(){
+    Route::get('/user', function (Request $request) {
+        return response()->json($request->user());
+    });
+
+    // Notification API routes - use web middleware for session auth
+    Route::prefix('notifications')->group(function(){
+        Route::get('/unread', [NotificationController::class, 'unread'])
+            ->name('api.notifications.unread');
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount'])
+            ->name('api.notifications.unread-count');
+    });
 });

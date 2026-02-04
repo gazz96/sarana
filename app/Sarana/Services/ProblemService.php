@@ -6,6 +6,7 @@ use App\Models\Problem;
 use App\Models\ProblemItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 
 
 class ProblemService
@@ -17,10 +18,12 @@ class ProblemService
     public $items = [];
     public $request;
     public $scope;
+    protected NotificationService $notificationService;
 
     public function __construct(Problem $problem)
     {
         $this->problem = $problem;
+        $this->notificationService = new NotificationService();
     }
 
     public function add($item)
@@ -124,6 +127,9 @@ class ProblemService
         $problem->items()
             ->whereNotIn('good_id', $items->pluck('good_id'))
             ->delete();
+        
+        // Notify about new problem created
+        $this->notificationService->notifyWorkflowChange($problem, 'problem_created');
     }
 
     public function saveAsTechnician()

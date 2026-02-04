@@ -1,483 +1,311 @@
 <!DOCTYPE html>
-<!--
-  HOW TO USE:
-  data-layout: fluid (default), boxed
-  data-sidebar-theme: dark (default), colored, light
-  data-sidebar-position: left (default), right
-  data-sidebar-behavior: sticky (default), fixed, compact
--->
-<html lang="en" data-bs-theme="light" data-layout="boxed" data-sidebar-theme="light" data-sidebar-position="left"
-    data-sidebar-behavior="sticky">
-
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Dashboard Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sarana & Prasarana Sekolah Dashboard">
     <meta name="author" content="Bagas Topati">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Sarana & Prasana Sekolah</title>
-
-    <link rel="canonical" href="https://instagram.com/bagas.topati" />
-    <link rel="shortcut icon" href="img/favicon.ico">
+    <title>Sarana & Prasarana Sekolah</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link href="{{ url('css/custom-main.css') }}" rel="stylesheet">
-    <link href="{{ url('appstack/css/app.css') }}" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-    <!-- BEGIN SETTINGS -->
-    <!-- Remove this after purchasing -->
-    {{-- <script src="{{ url('appstack/js/settings.js') }}"></script> --}}
-    <!-- END SETTINGS -->
-
-    
+    @stack('head')
     @yield('header')
 </head>
 
-<body>
-    <div class="wrapper">
-        <nav id="sidebar" class="sidebar">
-            <div class="sidebar-content js-simplebar">
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar - Fixed on Desktop, Hidden on Mobile -->
+        <aside class="sidebar hidden lg:flex fixed left-0 top-0 bottom-0 z-20">
+            <div class="sidebar-brand">
                 @if($app_logo = $option->getByKey('app_logo'))
-                <a class="sidebar-brand" href="{{url('dashboard')}}">
-                    <img src="{{url("uploads/{$app_logo}")}}" alt="Logo" class="img-fluid">
-                </a>
+                    <img src="{{ asset("uploads/{$app_logo}") }}" alt="Logo" class="h-8 w-auto">
+                @else
+                    <span class="font-bold text-lg">SARPRAS</span>
                 @endif
-
-                <ul class="sidebar-nav">
-                    <li class="sidebar-header fw-semibold">
-                        Navigasi
-                    </li>
-                   
-                    @if(auth()->user()->hasRole(['admin', 'super user']))
-
-                    <li class="sidebar-item">
-                        <a href="{{url('dashboard')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="home"></i>
+            </div>
+            
+            <nav class="sidebar-nav">
+                @if(auth()->user()->hasRole(['admin', 'super user']))
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Menu Utama</div>
+                        
+                        <a href="{{ url('dashboard') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a href="{{route('goods.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="list"></i>
+                        <a href="{{ route('goods.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
                             <span>Inventaris</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a href="{{route('locations.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="file"></i>
+                        <a href="{{ route('locations.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
                             <span>Lokasi</span>
                         </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="{{route('problems.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+
+                        <a href="{{ route('problems.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
                             <span>Masalah</span>
                         </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="{{route('users.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="users"></i>
+
+                        <a href="{{ route('users.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
                             <span>Pegawai</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a href="{{route('profile')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                        <a href="{{ route('profile') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
                             <span>Profile</span>
                         </a>
-                    </li>
+                    </div>
 
-                    <li class="sidebar-item">
-                        <a data-bs-target="#navbar-reports" data-bs-toggle="collapse" class="sidebar-link collapsed">
-                            <i class="align-middle" data-lucide="pie-chart"></i> <span
-                                class="align-middle">Laporan</span>
-                            {{-- <span class="badge badge-sidebar-primary">5</span> --}}
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Laporan & Pengaturan</div>
+                        
+                        <a href="{{ route('reports.problem') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span>Laporan</span>
                         </a>
-                        <ul id="navbar-reports" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{route('reports.problem')}}">Masalah</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{route('reports.finance')}}">Keuangan</a>
-                            </li>
-                            {{-- <li class="sidebar-item"><a class="sidebar-link" href="{{route('settings.approval')}}">Persetujuan</a></li> --}}
-                        </ul>
-                    </li>
-                
-                    <li class="sidebar-item">
-                        <a data-bs-target="#navbar-settings" data-bs-toggle="collapse" class="sidebar-link collapsed">
-                            <i class="align-middle" data-lucide="sliders"></i> <span
-                                class="align-middle">Pengaturan</span>
-                            {{-- <span class="badge badge-sidebar-primary">5</span> --}}
+
+                        <a href="{{ route('settings.general') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span>Pengaturan</span>
                         </a>
-                        <ul id="navbar-settings" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{route('settings.general')}}">Umum</a>
-                            </li>
-                            {{-- <li class="sidebar-item"><a class="sidebar-link" href="{{route('settings.approval')}}">Persetujuan</a></li> --}}
-                        </ul>
-                    </li>
-                  
-                    @endif
+                    </div>
+                @endif
 
-                    @if(auth()->user()->hasRole('teknisi'))
-
-                    <li class="sidebar-item">
-                        <a href="{{url('dashboard')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="home"></i>
+                @if(auth()->user()->hasRole('teknisi'))
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Menu Teknisi</div>
+                        
+                        <a href="{{ url('dashboard') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
-                    </li>
 
-                    
-                    <li class="sidebar-item">
-                        <a href="{{route('problems.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+                        <a href="{{ route('problems.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
                             <span>Masalah</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a href="{{route('profile')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                        <a href="{{ route('profile') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
                             <span>Profile</span>
                         </a>
-                    </li>
-                  
-                    @endif
+                    </div>
+                @endif
 
-                    @if(auth()->user()->hasRole(['lembaga', 'keuangan']))
-
-                    <li class="sidebar-item">
-                        <a href="{{url('dashboard')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="home"></i>
+                @if(auth()->user()->hasRole(['lembaga', 'keuangan']))
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Menu Manajemen</div>
+                        
+                        <a href="{{ url('dashboard') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
-                    </li>
 
-                    
-                    <li class="sidebar-item">
-                        <a href="{{route('problems.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+                        <a href="{{ route('problems.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
                             <span>Masalah</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a href="{{route('profile')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                        <a href="{{ route('profile') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
                             <span>Profile</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a data-bs-target="#navbar-reports" data-bs-toggle="collapse" class="sidebar-link collapsed">
-                            <i class="align-middle" data-lucide="pie-chart"></i> <span
-                                class="align-middle">Laporan</span>
-                            {{-- <span class="badge badge-sidebar-primary">5</span> --}}
+                        <a href="{{ route('reports.problem') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span>Laporan</span>
                         </a>
-                        <ul id="navbar-reports" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{route('reports.problem')}}">Masalah</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="{{route('reports.finance')}}">Keuangan</a>
-                            </li>
-                            {{-- <li class="sidebar-item"><a class="sidebar-link" href="{{route('settings.approval')}}">Persetujuan</a></li> --}}
-                        </ul>
-                    </li>
-                  
-                    @endif
+                    </div>
+                @endif
 
-
-                    @if(auth()->user()->hasRole('guru'))
-
-                    <li class="sidebar-item">
-                        <a href="{{url('dashboard')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="home"></i>
+                @if(auth()->user()->hasRole('guru'))
+                    <div class="sidebar-section">
+                        <div class="sidebar-section-title">Menu Guru</div>
+                        
+                        <a href="{{ url('dashboard') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
-                    </li>
 
-                    
-                    <li class="sidebar-item">
-                        <a href="{{route('problems.index')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="alert-triangle"></i>
+                        <a href="{{ route('problems.index') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
                             <span>Masalah</span>
                         </a>
-                    </li>
 
-                    <li class="sidebar-item">
-                        <a href="{{route('profile')}}" class="sidebar-link">
-                            <i class="align-middle text-body" data-lucide="user-check"></i>
+                        <a href="{{ route('profile') }}" class="sidebar-link">
+                            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
                             <span>Profile</span>
                         </a>
-                    </li>
-                  
-                    @endif
+                    </div>
+                @endif
+            </nav>
+        </aside>
 
-                </ul>
-
-               
-            </div>
-        </nav>
-        <div class="main">
-            <nav class="navbar navbar-expand navbar-bg">
-                <a class="sidebar-toggle">
-                    <i class="hamburger align-self-center"></i>
-                </a>
-
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div>
         
+        <!-- Mobile Sidebar -->
+        <aside id="mobile-sidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-white z-40 transform -translate-x-full transition-transform duration-300 lg:hidden">
+            <!-- Mobile sidebar content will be cloned here -->
+        </aside>
 
-                <div class="navbar-collapse collapse">
-                    <ul class="navbar-nav navbar-align">
-                        <li class="nav-item dropdown">
-                            <a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown"
-                                data-bs-toggle="dropdown">
-                                <div class="position-relative">
-                                    <i class="align-middle text-body" data-lucide="message-circle"></i>
-                                    <span class="indicator">4</span>
-                                </div>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
-                                aria-labelledby="messagesDropdown">
-                                <div class="dropdown-menu-header">
-                                    <div class="position-relative">
-                                        4 New Messages
-                                    </div>
-                                </div>
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <img src="img/avatars/avatar-5.jpg" class="img-fluid rounded-circle"
-                                                    alt="Ashley Briggs" width="40" height="40">
-                                            </div>
-                                            <div class="col-10 ps-2">
-                                                <div>Ashley Briggs</div>
-                                                <div class="text-muted small mt-1">Nam pretium turpis et arcu. Duis
-                                                    arcu tortor.</div>
-                                                <div class="text-muted small mt-1">15m ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <img src="img/avatars/avatar-2.jpg" class="img-fluid rounded-circle"
-                                                    alt="Carl Jenkins" width="40" height="40">
-                                            </div>
-                                            <div class="col-10 ps-2">
-                                                <div>Carl Jenkins</div>
-                                                <div class="text-muted small mt-1">Curabitur ligula sapien euismod
-                                                    vitae.</div>
-                                                <div class="text-muted small mt-1">2h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <img src="img/avatars/avatar-4.jpg" class="img-fluid rounded-circle"
-                                                    alt="Stacie Hall" width="40" height="40">
-                                            </div>
-                                            <div class="col-10 ps-2">
-                                                <div>Stacie Hall</div>
-                                                <div class="text-muted small mt-1">Pellentesque auctor neque nec urna.
-                                                </div>
-                                                <div class="text-muted small mt-1">4h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <img src="img/avatars/avatar-3.jpg" class="img-fluid rounded-circle"
-                                                    alt="Bertha Martin" width="40" height="40">
-                                            </div>
-                                            <div class="col-10 ps-2">
-                                                <div>Bertha Martin</div>
-                                                <div class="text-muted small mt-1">Aenean tellus metus, bibendum sed,
-                                                    posuere ac, mattis non.</div>
-                                                <div class="text-muted small mt-1">5h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dropdown-menu-footer">
-                                    <a href="#" class="text-muted">Show all messages</a>
-                                </div>
-                            </div>
-                        </li>
-                        {{-- <li class="nav-item dropdown">
-                            <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown"
-                                data-bs-toggle="dropdown">
-                                <div class="position-relative">
-                                    <i class="align-middle text-body" data-lucide="bell-off"></i>
-                                </div>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
-                                aria-labelledby="alertsDropdown">
-                                <div class="dropdown-menu-header">
-                                    4 New Notifications
-                                </div>
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <i class="text-danger" data-lucide="alert-circle"></i>
-                                            </div>
-                                            <div class="col-10">
-                                                <div>Update completed</div>
-                                                <div class="text-muted small mt-1">Restart server 12 to complete the
-                                                    update.</div>
-                                                <div class="text-muted small mt-1">2h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <i class="text-warning" data-lucide="bell"></i>
-                                            </div>
-                                            <div class="col-10">
-                                                <div>Lorem ipsum</div>
-                                                <div class="text-muted small mt-1">Aliquam ex eros, imperdiet vulputate
-                                                    hendrerit et.</div>
-                                                <div class="text-muted small mt-1">6h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <i class="text-primary" data-lucide="home"></i>
-                                            </div>
-                                            <div class="col-10">
-                                                <div>Login from 192.186.1.1</div>
-                                                <div class="text-muted small mt-1">8h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-2">
-                                                <i class="text-success" data-lucide="user-plus"></i>
-                                            </div>
-                                            <div class="col-10">
-                                                <div>New connection</div>
-                                                <div class="text-muted small mt-1">Anna accepted your request.</div>
-                                                <div class="text-muted small mt-1">12h ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dropdown-menu-footer">
-                                    <a href="#" class="text-muted">Show all notifications</a>
-                                </div>
-                            </div>
-                        </li> --}}
-                        {{-- <li class="nav-item nav-theme-toggle dropdown">
-                            <a class="nav-icon js-theme-toggle" href="#">
-                                <div class="position-relative">
-                                    <i class="align-middle text-body nav-theme-toggle-light" data-lucide="sun"></i>
-                                    <i class="align-middle text-body nav-theme-toggle-dark" data-lucide="moon"></i>
-                                </div>
-                            </a>
-                        </li> --}}
-                        <li class="nav-item dropdown">
-                            <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
-                                data-bs-toggle="dropdown">
-                                <i class="align-middle" data-lucide="settings"></i>
-                            </a>
+        <!-- Main Content Area -->
+        <div class="flex-1 lg:ml-64 flex flex-col">
+            <!-- Navbar -->
+            <nav class="navbar bg-white border-b sticky top-0 z-10">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleSidebar()" class="navbar-link lg:hidden">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="text-sm text-muted">
+                            {{ now()->format('l, d F Y') }}
+                        </div>
+                    </div>
 
-                            <a class="nav-link dropdown-toggle d-none d-sm-inline-block" 
-                                href="#"
-                                data-bs-toggle="dropdown">
-                                {{-- <img src="img/avatars/avatar.jpg" class="img-fluid rounded-circle me-1 mt-n2 mb-n2"
-                                    alt="Chris Wood" width="40" height="40" />  --}}
-                                <span>{{auth()->user()->name ?? '-'}}</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="{{route('profile')}}"><i class="align-middle me-1"
-                                        data-lucide="user"></i> Profile</a>
-                                {{-- <a class="dropdown-item" href="#"><i class="align-middle me-1" data-lucide="pie-chart"></i> Analytics</a> --}}
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ route('settings.general')}}">Pengaturan</a>
-                                {{-- <a class="dropdown-item" href="#">Help</a> --}}
-                                <a class="dropdown-item" href="{{route('logout')}}">Sign out</a>
+                    <div class="navbar-nav">
+                        @if(auth()->check())
+                            @include('components.notification-bell')
+                        @endif
+
+                        <div class="relative">
+                            <button onclick="toggleUserMenu()" class="navbar-link flex items-center gap-3">
+                                <div class="text-left hidden md:block">
+                                    <div class="text-sm font-semibold">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-muted">{{ auth()->user()->email ?? '' }}</div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                            </button>
+
+                            <div id="user-menu" class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden">
+                                <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    Profile
+                                </a>
+                                <a href="{{ route('settings.general') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    Pengaturan
+                                </a>
+                                <div class="border-t border-gray-200 my-2"></div>
+                                <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    Sign out
+                                </a>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </nav>
 
-            <main class="content">
-                {{-- <div class="container-fluid p-0">
-
-                    <h1 class="h3 mb-3">Blank Page</h1>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Empty card</h5>
-                                </div>
-                                <div class="card-body">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div> --}}
-                @yield('content')
-            </main>
-
-            {{-- <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row text-muted">
-                        <div class="col-6 text-start">
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <a class="text-muted" href="#">Support</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="text-muted" href="#">Help Center</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="text-muted" href="#">Privacy</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="text-muted" href="#">Terms of Service</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-6 text-end">
-                            <p class="mb-0">
-                                &copy; 2024</a>
-                            </p>
-                        </div>
-                    </div>
+            <!-- Page Content -->
+            <main class="flex-1 bg-gray-50">
+                <div class="p-6">
+                    @yield('content')
                 </div>
-            </footer> --}}
+            </main>
         </div>
     </div>
 
-    <script src="{{ url('appstack/js/jquery.min.js') }}"></script>
-    <script src="{{ url('appstack/js/app.js') }}"></script>
+    <!-- Scripts -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-    @yield('footer')
-    
+    <script>
+        // Toggle sidebar (mobile)
+        function toggleSidebar() {
+            const mobileSidebar = document.getElementById('mobile-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            mobileSidebar.classList.toggle('-translate-x-full');
+            mobileSidebar.classList.toggle('translate-x-0');
+            overlay.classList.toggle('hidden');
+        }
 
+        // Clone desktop sidebar to mobile sidebar
+        function cloneMobileSidebar() {
+            const desktopSidebar = document.querySelector('.sidebar');
+            const mobileSidebar = document.getElementById('mobile-sidebar');
+            
+            if (desktopSidebar && mobileSidebar) {
+                mobileSidebar.innerHTML = desktopSidebar.innerHTML;
+            }
+        }
+
+        // Toggle user menu
+        function toggleUserMenu() {
+            const menu = document.getElementById('user-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('user-menu');
+            const userButton = event.target.closest('button[onclick="toggleUserMenu()"]');
+            
+            if (!userButton && !event.target.closest('#user-menu')) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Initialize mobile sidebar on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            cloneMobileSidebar();
+        });
+    </script>
+
+    @stack('scripts')
+    @yield('footer')
 </body>
 
 </html>

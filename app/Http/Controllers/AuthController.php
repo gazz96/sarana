@@ -22,7 +22,8 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if(Auth::attempt($validated))
+        
+        if((Auth::attempt($validated)))
         {
             return redirect()
                 ->intended(route('dashboard.index'));
