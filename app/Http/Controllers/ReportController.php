@@ -64,75 +64,109 @@ class ReportController extends Controller
 
     public function finance(Request $request)
     {
+        // Enhanced financial reporting with comprehensive statistics
+        $reportService = new ReportService;
+        
+        // Get statistics with filters
+        $statistics = $reportService->getFinancialStatistics($request->date);
+        $monthlyTrends = $reportService->getMonthlyFinancialTrends($request->date);
+        $categoryBreakdown = $reportService->getCategoryCostBreakdown($request->date);
+        $paymentTracking = $reportService->getPaymentTracking($request->date);
+        
+        // Get table data
         $table = (new Table())
             ->setModel(ProblemItem::class)
             ->applys([
                 'loadRelation' => function($query) {
-                    return $query->with('problem');
+                    return $query->with(['problem', 'good']);
                 },
-                'finishOnly' => function($query) {
+                'finishedOnly' => function($query) {
                     return $query->whereHas('problem', function($query){
-                        return $query->where('status', 2);
+                        return $query->where('status', 3); // Selesai
                     });
                 }
             ])
             ->filters([
                 'date' => function($query, $date) {
-                    $date = str_replace('-', '|', $date);
-                    $date = str_replace('/', '-', $date);
-                    $date = explode(" | ", $date);
-
-
-                    $query->whereHas('problem', function($query) use($date){
-                        return $query->whereBetween('date', $date);
-                    });
+                    if($date) {
+                        $date = str_replace('-', '|', $date);
+                        $date = str_replace('/', '-', $date);
+                        $date = explode(" | ", $date);
+                        
+                        if(count($date) >= 2) {
+                            $query->whereHas('problem', function($query) use($date){
+                                return $query->whereBetween('date', $date);
+                            });
+                        }
+                    }
                 }
             ])
             ->columns([
                 [
-                    'label' => 'Kode',
+                    'label' => 'Kode Laporan',
                     'name' => 'code',
                     'callback' => function($row)
                     {
-                        return $row->problem->code ?? '-';
+                        return '<span class="badge badge-neutral">' . ($row->problem->code ?? '-') . '</span>';
                     } 
                 ],
-
                 [
                     'label' => 'Tanggal',
                     'name' => 'date',
                     'callback' => function($row)
                     {
-                        return $row->problem->date;
+                        return date('d M Y', strtotime($row->problem->date ?? 'now'));
                     } 
                 ],
-
                 [
-                    'label' => 'Nama',
-                    'name' => 'date',
+                    'label' => 'Barang',
+                    'name' => 'good',
                     'callback' => function($row)
                     {
                         return implode('', [
-                            "<small class='fw-bold'>" . ($row->good->code ?? '') . "</small>",
-                            "<div>" . ($row->good->name ?? '') . "</div>"
+                            '<small class="text-xs opacity-70">' . ($row->good->code ?? '') . '</small>',
+                            '<div class="font-medium">' . ($row->good->name ?? '') . '</div>',
+                            '<div class="text-xs opacity-70">' . ($row->issue ?? '') . '</div>'
                         ]);
                     } 
                 ],
                 [
-                    'label' => 'Harga',
+                    'label' => 'Biaya Perbaikan',
                     'name' => 'price',
                     'callback' => function($row)
                     {
-                        return number_format($row->price);
+                        return '<span class="font-semibold text-success">Rp ' . number_format($row->price) . '</span>';
+                    } 
+                ],
+                [
+                    'label' => 'Status Pembayaran',
+                    'name' => 'payment_status',
+                    'callback' => function($row)
+                    {
+                        $problem = $row->problem;
+                        $status = 'pending';
+                        $badgeClass = 'warning';
+                        
+                        if($problem->user_finance_id) {
+                            $status = 'approved';
+                            $badgeClass = 'success';
+                        } elseif($problem->admin_id && $problem->user_management_id) {
+                            $status = 'processing';
+                            $badgeClass = 'info';
+                        }
+                        
+                        return '<span class="badge badge-' . $badgeClass . '">' . strtoupper($status) . '</span>';
                     } 
                 ],
             ])
             ->render();
 
-            $report_service = new ReportService;
-            $total_pengeluaran = $report_service->getTotalPengeluaran($request->date);
-            $total_good_fixed = $report_service->getTotalGoodFixed($request->date);
-
-        return view('reports.finance', compact('table', 'total_pengeluaran', 'total_good_fixed'));
+        return view('reports.finance', compact(
+            'table', 
+            'statistics', 
+            'monthlyTrends', 
+            'categoryBreakdown',
+            'paymentTracking'
+        ));
     }
 }
