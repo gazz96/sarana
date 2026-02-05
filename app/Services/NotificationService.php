@@ -42,7 +42,7 @@ class NotificationService
 
     protected function getRecipientsForEvent(Problem $problem, string $event): array
     {
-        $recipients = [];
+        $recipients = collect();
 
         switch ($event) {
             case 'problem_created':
@@ -50,32 +50,32 @@ class NotificationService
                 // Notify technicians and admin
                 $recipients = User::whereHas('roles', function ($query) {
                     $query->whereIn('name', ['teknisi', 'admin']);
-                })->get()->toArray();
+                })->get();
                 break;
 
             case 'problem_accepted':
             case 'problem_in_progress':
             case 'problem_finished':
                 // Notify the reporter (guru) and admin
-                $recipients = collect([$problem->user])->filter()->toArray();
+                $recipients = collect([$problem->user])->filter();
                 $adminUsers = User::whereHas('roles', function ($query) {
                     $query->where('name', 'admin');
-                })->get()->toArray();
-                $recipients = array_merge($recipients, $adminUsers);
+                })->get();
+                $recipients = $recipients->merge($adminUsers);
                 break;
 
             case 'problem_approved_management':
                 // Notify admin and finance
                 $recipients = User::whereHas('roles', function ($query) {
                     $query->whereIn('name', ['admin', 'keuangan']);
-                })->get()->toArray();
+                })->get();
                 break;
 
             case 'problem_approved_admin':
                 // Notify finance and management
                 $recipients = User::whereHas('roles', function ($query) {
                     $query->whereIn('name', ['keuangan', 'lembaga']);
-                })->get()->toArray();
+                })->get();
                 break;
 
             case 'problem_approved_finance':
@@ -86,7 +86,7 @@ class NotificationService
                     $problem->admin,
                     $problem->management,
                     $problem->finance
-                ])->filter()->toArray();
+                ])->filter();
                 break;
 
             case 'problem_cancelled':
@@ -95,11 +95,11 @@ class NotificationService
                     $problem->user,
                     $problem->technician,
                     $problem->admin,
-                ])->filter()->toArray();
+                ])->filter();
                 break;
         }
 
-        return $recipients;
+        return $recipients->all();
     }
 
     protected function shouldNotifyUser(User $user, string $event): bool
@@ -153,18 +153,28 @@ class NotificationService
     protected function sendEmailNotification(User $user, array $data): void
     {
         try {
-            // TODO: Implement email sending logic
-            // Mail::to($user)->send(new WorkflowNotificationEmail($data));
+            $problem = null;
+            if (isset($data['problem_id'])) {
+                $problem = Problem::find($data['problem_id']);
+            }
+
+            $event = $data['event'] ?? 'notification';
             
-            Log::info('Email notification queued', [
+            // Send email using WorkflowNotificationEmail
+            Mail::to($user)->send(new \App\Mail\WorkflowNotificationEmail($data, $problem, $event));
+            
+            Log::info('Email notification sent successfully', [
                 'user_id' => $user->id,
                 'email' => $user->email,
-                'event' => $data['event']
+                'event' => $event,
+                'problem_id' => $data['problem_id'] ?? null
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to send email notification', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }

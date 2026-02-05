@@ -18,9 +18,16 @@ return [
         
         // Email templates
         'templates' => [
-            'workflow' => 'emails.workflow-notification',
+            'workflow' => 'emails.workflow.default',
+            'completed' => 'emails.workflow.completed',
             'reminder' => 'emails.reminder',
             'alert' => 'emails.alert',
+        ],
+        
+        // Queue settings for email sending
+        'queue' => [
+            'enabled' => env('EMAIL_QUEUE_ENABLED', true),
+            'connection' => env('EMAIL_QUEUE_CONNECTION', 'database'),
         ],
     ],
 
