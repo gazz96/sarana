@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoodController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PhotoUploadController;
 use App\Http\Controllers\ProblemController;
@@ -80,6 +81,17 @@ Route::middleware('auth')->group(function(){
         ->group(function(){
             Route::get('problem', [ReportController::class, 'problem'])->name('reports.problem');
             Route::get('finance', [ReportController::class, 'finance'])->name('reports.finance');
+        });
+
+        // Monitoring Routes (Admin & Lembaga only)
+        Route::prefix('monitoring')->name('monitoring.')->group(function(){
+            Route::get('dashboard', [MonitoringController::class, 'dashboard'])->name('dashboard');
+            Route::get('health', [MonitoringController::class, 'health'])->name('health');
+            Route::get('errors', [MonitoringController::class, 'errors'])->name('errors');
+            Route::get('error-stats', [MonitoringController::class, 'errorStats'])->name('error-stats');
+            Route::get('activities', [MonitoringController::class, 'activities'])->name('activities');
+            Route::get('performance', [MonitoringController::class, 'performance'])->name('performance');
+            Route::post('health-check', [MonitoringController::class, 'runHealthCheck'])->name('run-health-check');
         });
 
 });

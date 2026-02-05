@@ -2,11 +2,20 @@
 
 namespace App\Exceptions;
 
+use App\Services\MonitoringService;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    protected $monitoringService;
+
+    public function __construct(MonitoringService $monitoringService)
+    {
+        $this->monitoringService = $monitoringService;
+    }
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -35,7 +44,29 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            $this->monitoringService->logError($e, [
+                'user_id' => Auth::id(),
+                'url' => request()->fullUrl(),
+                'method' => request()->method(),
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     */
+    public function render($request, Throwable $e)
+    {
+        if (!$this->isHttpException($e) && config('app.debug')) {
+            $this->monitoringService->logError($e, [
+                'user_id' => Auth::id(),
+                'url' => $request->fullUrl(),
+                'method' => $request->method()
+            ]);
+        }
+
+        return parent::render($request, $e);
     }
 }
