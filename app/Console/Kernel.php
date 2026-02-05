@@ -15,7 +15,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Send email reminders daily at 9 AM
+        $schedule->command('emails:send-reminders')
+                 ->dailyAt('09:00')
+                 ->timezone('Asia/Jakarta')
+                 ->description('Send automatic email reminders for pending problems');
+
+        // Process email queue every 5 minutes
+        $schedule->command('emails:process-queue')
+                 ->everyFiveMinutes()
+                 ->description('Process the email queue');
     }
 
     /**

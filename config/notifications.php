@@ -28,6 +28,8 @@ return [
         'queue' => [
             'enabled' => env('EMAIL_QUEUE_ENABLED', true),
             'connection' => env('EMAIL_QUEUE_CONNECTION', 'database'),
+            'chunk_size' => env('EMAIL_QUEUE_CHUNK_SIZE', 50),
+            'delay_between_chunks' => env('EMAIL_QUEUE_DELAY_BETWEEN_CHUNKS', 2),
         ],
     ],
 
