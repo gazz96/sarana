@@ -131,4 +131,31 @@ class GoodController extends Controller
         }
         
     }
+
+    /**
+     * Search goods via AJAX
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+        
+        $goods = Good::query()
+            ->where('name', 'like', '%' . $query . '%')
+            ->orWhere('code', 'like', '%' . $query . '%')
+            ->orderBy('name', 'ASC')
+            ->limit(20)
+            ->get(['id', 'name', 'code']);
+        
+        return response()->json([
+            'results' => $goods->map(function($good) {
+                return [
+                    'id' => $good->id,
+                    'text' => $good->name . ' (' . $good->code . ')'
+                ];
+            })
+        ]);
+    }
 }

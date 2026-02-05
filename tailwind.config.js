@@ -76,5 +76,37 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
+  daisyui: {
+    themes: [
+      {
+        light: {
+          "primary": "#2563eb",
+          "secondary": "#4b5563",
+          "accent": "#3b82f6",
+          "neutral": "#1f2937",
+          "base-100": "#ffffff",
+          "info": "#3b82f6",
+          "success": "#22c55e",
+          "warning": "#f59e0b",
+          "error": "#ef4444",
+        },
+        dark: {
+          "primary": "#3b82f6",
+          "secondary": "#9ca3af",
+          "accent": "#60a5fa",
+          "neutral": "#1f2937",
+          "base-100": "#1f2937",
+          "info": "#3b82f6",
+          "success": "#22c55e",
+          "warning": "#f59e0b",
+          "error": "#ef4444",
+        },
+      },
+    ],
+    logs: false,
+    rtl: false,
+  },
 }

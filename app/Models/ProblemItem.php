@@ -15,7 +15,12 @@ class ProblemItem extends Model
         'issue',
         'price',
         'status',
-        'note'
+        'note',
+        'photos'
+    ];
+
+    protected $casts = [
+        'photos' => 'array',
     ];
 
     protected static $STATUS = ['MENUNGGU', 'DIPROSES', 'SELESAI', 'TIDAK BISA DI PERBAIKI'];
@@ -28,5 +33,32 @@ class ProblemItem extends Model
     public function problem()
     {
         return $this->belongsTo(Problem::class);
+    }
+
+    public function addPhoto($photoPath)
+    {
+        $photos = $this->photos ?? [];
+        $photos[] = $photoPath;
+        $this->update(['photos' => $photos]);
+    }
+
+    public function removePhoto($photoPath)
+    {
+        $photos = $this->photos ?? [];
+        $key = array_search($photoPath, $photos);
+        if ($key !== false) {
+            unset($photos[$key]);
+            $this->update(['photos' => array_values($photos)]);
+        }
+    }
+
+    public function getFirstPhotoAttribute()
+    {
+        return $this->photos[0] ?? null;
+    }
+
+    public function hasPhotos()
+    {
+        return !empty($this->photos) && count($this->photos) > 0;
     }
 }

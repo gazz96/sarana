@@ -1,10 +1,14 @@
 <!-- Notification Bell Component -->
-<li class="nav-item dropdown notification-bell">
-    <a class="nav-icon dropdown-toggle" href="#" id="notificationDropdown" 
-       data-toggle="dropdown" aria-expanded="false"
-       onclick="loadNotifications()">
-        <div class="relative">
-            <i class="align-middle text-body" data-lucide="bell"></i>
+<div class="notification-bell-wrapper" style="display: flex; align-items: center;">
+    <a class="nav-icon" href="#" id="notificationDropdown" 
+       role="button" 
+       onclick="toggleNotificationDropdown(event)"
+       style="display: flex; align-items: center; justify-content: center; padding: 0.5rem; text-decoration: none; color: inherit;">
+        <div class="relative" style="display: flex; align-items: center; justify-content: center;">
+            <!-- SVG Bell Icon -->
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b5563;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
             @php
                 $unreadCount = 0;
                 try {
@@ -16,17 +20,18 @@
                 }
             @endphp
             @if($unreadCount > 0)
-                <span class="indicator">
+                <span class="indicator" style="position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; background: #ef4444; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 600; padding: 0 4px; border: 2px solid white;">
                     {{ $unreadCount }}
                 </span>
             @endif
         </div>
     </a>
     
-    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0 notification-dropdown" 
-         aria-labelledby="notificationDropdown"
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0 notification-dropdown shadow-lg rounded-lg border" 
+         style="display: none; position: absolute; right: 0; top: 100%; width: 350px; max-height: 400px; overflow-y: auto; z-index: 1000; background: white;"
          id="notificationList">
-        <div class="dropdown-menu-header border-b border-gray-200 px-4 py-3">
+        <div class="dropdown-menu-header border-b border-gray-200 px-4 py-3 bg-gray-50">
             <div class="flex justify-between items-center">
                 <span>Notifikasi</span>
                 <a href="#" 
@@ -34,7 +39,7 @@
                    onclick="markAllAsRead(event)">Tandai Semua Dibaca</a>
             </div>
         </div>
-        <div class="notification-loading hidden">
+        <div class="notification-loading" style="display: none;">
             <div class="text-center py-3">
                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600" role="status">
                     <span class="sr-only">Loading...</span>
@@ -111,85 +116,140 @@
 </style>
 
 <script>
+// Toggle notification dropdown
+function toggleNotificationDropdown(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const dropdown = document.getElementById('notificationList');
+    const isVisible = dropdown.style.display !== 'none';
+    
+    // Toggle dropdown visibility
+    dropdown.style.display = isVisible ? 'none' : 'block';
+    
+    // Load notifications when opening
+    if (!isVisible) {
+        loadNotifications();
+    }
+}
+
+// Load notifications via AJAX
 function loadNotifications() {
     const notificationList = document.getElementById('notificationList');
     const loadingSpinner = notificationList.querySelector('.notification-loading');
     const notificationItems = notificationList.querySelector('.notification-items');
     
     // Show loading spinner
-    loadingSpinner.classList.remove('d-none');
+    if (loadingSpinner) {
+        loadingSpinner.classList.remove('d-none');
+        loadingSpinner.classList.remove('hidden');
+        loadingSpinner.style.display = 'block';
+    }
     
-    fetch('{{ route('api.notifications.unread') }}')
-        .then(response => response.json())
+    fetch('{{ route('notifications.unread') }}')
+        .then(response => {
+            console.log('Notifications API response status:', response.status);
+            return response.json();
+        })
         .then(data => {
-            loadingSpinner.classList.add('d-none');
+            console.log('Notifications data received:', data);
+            if (loadingSpinner) {
+                loadingSpinner.classList.add('d-none');
+                loadingSpinner.classList.add('hidden');
+            }
             
             if (data.notifications && data.notifications.length > 0) {
-                notificationItems.innerHTML = data.notifications.map(notification => `
-                    <a href="${notification.data.link}" class="list-group-item ${notification.read_at ? '' : 'bg-light'}">
-                        <div class="row g-0 align-items-center">
-                            <div class="col-2">
-                                <i class="text-${getNotificationColor(notification.data.event)}" data-lucide="${getNotificationIcon(notification.data.event)}"></i>
+                notificationItems.innerHTML = data.notifications.map(notification => {
+                    // Safely extract notification data
+                    const notifData = notification.data || {};
+                    const eventName = notifData.event_name || 'Notifikasi';
+                    const message = notifData.message || 'Update status problem';
+                    const link = notifData.link || '#';
+                    const event = notifData.event || 'default';
+                    
+                    return `
+                    <a href="${link}" class="list-group-item ${notification.read_at ? '' : 'bg-light'}" style="display: block; padding: 10px 15px; border-bottom: 1px solid #f0f0f0; text-decoration: none; color: inherit;">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0">
+                                <span class="w-8 h-8 rounded-full bg-${getNotificationColor(event)}-100 text-${getNotificationColor(event)}-600 flex items-center justify-center">
+                                    ${getNotificationEmoji(event)}
+                                </span>
                             </div>
-                            <div class="col-10">
-                                <div class="text-dark">${notification.data.event_name}</div>
-                                <div class="text-muted small mt-1">${notification.data.message}</div>
-                                <div class="text-muted small mt-1">${formatTime(notification.created_at)}</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-sm">${eventName}</div>
+                                <div class="text-xs text-gray-600 mt-1">${message}</div>
+                                <div class="text-xs text-gray-400 mt-1">${formatTime(notification.created_at)}</div>
                             </div>
                         </div>
                     </a>
-                `).join('');
-                
-                // Re-initialize lucide icons for new elements
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
+                    `;
+                }).join('');
             } else {
                 notificationItems.innerHTML = `
                     <div class="text-center py-3 text-muted">
-                        <i class="d-block mb-2" data-lucide="bell-off" style="width: 40px; height: 40px; opacity: 0.5;"></i>
+                        <svg class="d-block mx-auto mb-2" style="width: 40px; height: 40px; opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
                         Tidak ada notifikasi baru
                     </div>
                 `;
             }
         })
         .catch(error => {
-            loadingSpinner.classList.add('d-none');
+            console.error('Error loading notifications:', error);
+            
+            if (loadingSpinner) {
+                loadingSpinner.classList.add('d-none');
+                loadingSpinner.classList.add('hidden');
+                loadingSpinner.style.display = 'none';
+            }
+            
             notificationItems.innerHTML = `
                 <div class="text-center py-3 text-danger">
-                    <i class="d-block mb-2" data-lucide="alert-circle" style="width: 40px; height: 40px;"></i>
+                    <svg class="d-block mx-auto mb-2" style="width: 40px; height: 40px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                     Gagal memuat notifikasi
+                    <small class="d-block mt-2 text-muted">${error.message || 'Unknown error'}</small>
                 </div>
             `;
+        })
+        .finally(() => {
+            // Always hide loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.classList.add('d-none');
+                loadingSpinner.classList.add('hidden');
+                loadingSpinner.style.display = 'none';
+            }
         });
 }
 
-function getNotificationIcon(event) {
-    const icons = {
-        'problem_created': 'plus-circle',
-        'problem_submitted': 'send',
-        'problem_accepted': 'check-circle',
-        'problem_finished': 'tool',
-        'problem_cancelled': 'x-circle',
-        'problem_approved_management': 'shield',
-        'problem_approved_admin': 'user-check',
-        'problem_approved_finance': 'credit-card'
+function getNotificationEmoji(event) {
+    const emojis = {
+        'problem_created': '➕',
+        'problem_submitted': '📤',
+        'problem_accepted': '✅',
+        'problem_finished': '🔧',
+        'problem_cancelled': '❌',
+        'problem_approved_management': '🛡️',
+        'problem_approved_admin': '👤',
+        'problem_approved_finance': '💳'
     };
-    return icons[event] || 'bell';
+    return emojis[event] || '🔔';
 }
 
 function getNotificationColor(event) {
     const colors = {
-        'problem_created': 'primary',
-        'problem_submitted': 'warning',
-        'problem_accepted': 'success',
-        'problem_finished': 'info',
-        'problem_cancelled': 'danger',
-        'problem_approved_management': 'primary',
-        'problem_approved_admin': 'success',
-        'problem_approved_finance': 'info'
+        'problem_created': 'blue',
+        'problem_submitted': 'yellow',
+        'problem_accepted': 'green',
+        'problem_finished': 'blue',
+        'problem_cancelled': 'red',
+        'problem_approved_management': 'blue',
+        'problem_approved_admin': 'green',
+        'problem_approved_finance': 'blue'
     };
-    return colors[event] || 'secondary';
+    return colors[event] || 'gray';
 }
 
 function markAsRead(event, notificationId) {
@@ -243,7 +303,7 @@ function markAllAsRead(event) {
 }
 
 function updateNotificationBadge() {
-    fetch('{{ route('api.notifications.unread-count') }}')
+    fetch('{{ route('notifications.unreadCount') }}')
         .then(response => response.json())
         .then(data => {
             const badge = document.querySelector('.notification-bell .indicator');
@@ -276,6 +336,16 @@ function formatTime(dateTime) {
         return date.toLocaleDateString('id-ID');
     }
 }
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationList');
+    const toggle = document.getElementById('notificationDropdown');
+    
+    if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
 
 // Auto-refresh notifications every 30 seconds
 setInterval(() => {

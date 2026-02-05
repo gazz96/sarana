@@ -76,15 +76,33 @@ class ProblemService
 
             $items->map(function($item, $key) use($problem) {
                 $item['status'] = 0;
-                $problem
-                    ->items()
-                    ->updateOrCreate(
-                        [
-                            'problem_id' => $problem->id,
-                            'good_id' => $item['good_id']
-                        ],
-                        $item
-                    );
+                
+                // Update or create the problem item
+                $problemItem = $problem->items()->updateOrCreate(
+                    [
+                        'problem_id' => $problem->id,
+                        'good_id' => $item['good_id']
+                    ],
+                    [
+                        'issue' => $item['issue'],
+                        'status' => $item['status']
+                    ]
+                );
+                
+                // Handle photos if present
+                if (isset($item['photos']) && !empty($item['photos'])) {
+                    $photos = is_array($item['photos']) ? $item['photos'] : explode(',', $item['photos']);
+                    
+                    // Clear existing photos and add new ones
+                    $problemItem->photos = [];
+                    $problemItem->save();
+                    
+                    foreach ($photos as $photo) {
+                        if (!empty($photo)) {
+                            $problemItem->addPhoto($photo);
+                        }
+                    }
+                }
                 });
 
             $problem->items()
@@ -96,14 +114,12 @@ class ProblemService
 
 
         $validated = $this->request->validate([
-            'code' => 'nullable',
+            'date' => 'required|date',
             'items' => 'required'
         ]);
 
-        if(!$validated['code'])
-        {
-            $validated['code'] = Problem::generateLetterNumber('PRB');
-        }
+        // Generate code if not provided
+        $validated['code'] = Problem::generateLetterNumber('PRB');
         
         $problem = Auth::user()
             ->problems()
@@ -116,12 +132,22 @@ class ProblemService
 
         $items->map(function($item, $key) use($problem) {
             $item['status'] = 0;
-            $problem
-                ->items()
-                ->create([
-                    'good_id' => $item['good_id'],
-                    'issue' => $item['issue'],
-                ]);
+            
+            // Create the problem item
+            $problemItem = $problem->items()->create([
+                'good_id' => $item['good_id'],
+                'issue' => $item['issue'],
+            ]);
+            
+            // Handle photos if present
+            if (isset($item['photos']) && !empty($item['photos'])) {
+                $photos = is_array($item['photos']) ? $item['photos'] : explode(',', $item['photos']);
+                foreach ($photos as $photo) {
+                    if (!empty($photo)) {
+                        $problemItem->addPhoto($photo);
+                    }
+                }
+            }
         });
 
         $problem->items()

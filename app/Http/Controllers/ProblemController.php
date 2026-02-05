@@ -35,15 +35,15 @@ class ProblemController extends Controller
                 'label' => 'Kode',
                 'callback' => function($row)
                 {
-                    return "{$row->code}
-                        <div class=\"d-flex align-items-center tr-actions\">
-                            <a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a> 
-                            <a href=\"". route('problems.print', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Cetak</a> 
-                            <a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none mx-2\">Edit</a>
-                            <form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"mx-2\">
+                    return "<div class=\"font-medium text-gray-900 dark:text-white\">{$row->code}</div>
+                        <div class=\"flex flex-wrap gap-1 mt-1\">
+                            <a href=\"". route('problems.show', $row) . "\" class=\"text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 px-2 py-1 rounded\">Lihat</a> 
+                            <a href=\"". route('problems.print', $row) . "\" target=\"_blank\" class=\"text-xs bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 px-2 py-1 rounded\">Cetak</a> 
+                            <a href=\"" . route('problems.edit', $row) . "\" class=\"text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:hover:bg-yellow-800 px-2 py-1 rounded\">Edit</a>
+                            <form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"inline\">
                                 <input type=\"hidden\" name=\"_token\" value=\"" . csrf_token() . "\" />
                                 <input type=\"hidden\" name=\"_method\" value=\"DELETE\">
-                                <button class=\"btn p-0 text-danger\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
+                                <button class=\"text-xs bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800 px-2 py-1 rounded\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
                             </form>
                         </div>";
                 }
@@ -86,38 +86,36 @@ class ProblemController extends Controller
                     'callback' => function($row)
                     {
                         $submit_html = $edit_html = $delete_html = $show_html = $cancel_html = $accept_html = "";
-                        $show_html = "<a href=\"". route('problems.show', $row) . "\" class=\"text-decoration-none me-2\">Lihat</a>";
+                        $show_html = "<a href=\"". route('problems.show', $row) . "\" class=\"text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 px-2 py-1 rounded\">Lihat</a>";
 
-                        if($row->status === 1) 
+                        if($row->status === 1)
                         {
-                            $submit_html = "<a href=\"". route('problems.accept', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Terima</a>";
+                            $submit_html = "<a href=\"". route('problems.accept', $row) . "\" target=\"_blank\" class=\"text-xs bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800 px-2 py-1 rounded\">Terima</a>";
                         }
-                        
+
                         if($row->status === 2 )
                         {
-                            $edit_html = "<a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none me-2\">Edit</a>";
-                            $delete_html = "<a href=\"". route('problems.cancel', $row) . "\" class=\"text-decoration-none me-2 text-danger\" onclick=\"return confirm('Batalkan???')\">Batalkan</a>";
+                            $edit_html = "<a href=\"" . route('problems.edit', $row) . "\" class=\"text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:hover:bg-yellow-800 px-2 py-1 rounded\">Edit</a>";
+                            $delete_html = "<a href=\"". route('problems.cancel', $row) . "\" class=\"text-xs bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800 px-2 py-1 rounded\" onclick=\"return confirm('Batalkan???')\">Batal</a>";
 
                             if(!$row->user_management_id)
                             {
-                                $accept_html = "<a href=\"". route('problems.management-approval', $row) . "\" class=\"text-decoration-none me-2 text-primary\" onclick=\"return confirm('Yakin ingin mengajukan harga ???')\">Ajukan</a>";
+                                $accept_html = "<a href=\"". route('problems.management-approval', $row) . "\" class=\"text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-300 dark:hover:bg-purple-800 px-2 py-1 rounded\" onclick=\"return confirm('Yakin ingin mengajukan harga ???')\">Ajukan</a>";
                             }
-                            
+
                         }
 
                         if($row->status == 5)
                         {
-                            $accept_html = "<a href=\"". route('problems.finish', $row) . "\" class=\"text-decoration-none me-2 text-success\" onclick=\"return confirm('Yakin sudah selesai ???')\">Tandai sebagai selesai</a>";
+                            $accept_html = "<a href=\"". route('problems.finish', $row) . "\" class=\"text-xs bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800 px-2 py-1 rounded\" onclick=\"return confirm('Yakin sudah selesai ???')\">Selesai</a>";
                         }
 
                         $html = $show_html . $submit_html . $edit_html . $accept_html . $delete_html;
-                        
-                        return "
-                            {$row->code}
-                            <div class=\"d-flex align-items-center tr-actions\">
+
+                        return "<div class=\"font-medium text-gray-900 dark:text-white\">{$row->code}</div>
+                            <div class=\"flex flex-wrap gap-1 mt-1\">
                                 {$html}
-                            </div>
-                        ";
+                            </div>";
                     }
                 ],
                 [
@@ -186,31 +184,29 @@ class ProblemController extends Controller
 
                         $submit_html = $edit_html = $delete_html = $show_html = "";
 
-                        if($row->status === 0) 
+                        if($row->status === 0)
                         {
-                            $submit_html = "<a href=\"". route('problems.submit', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Ajukan</a>";
-                            $edit_html = "<a href=\"" . route('problems.edit', $row) . "\" class=\"text-decoration-none me-2\">Edit</a>";
-                            $delete_html = "<form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"mx-2\">
+                            $submit_html = "<a href=\"". route('problems.submit', $row) . "\" target=\"_blank\" class=\"text-xs bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800 px-2 py-1 rounded\">Ajukan</a>";
+                            $edit_html = "<a href=\"" . route('problems.edit', $row) . "\" class=\"text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:hover:bg-yellow-800 px-2 py-1 rounded\">Edit</a>";
+                            $delete_html = "<form action=\"" . route('problems.destroy', $row) . "\" method=\"POST\" class=\"inline\">
                                 <input type=\"hidden\" name=\"_token\" value=\"" . csrf_token() . "\" />
                                 <input type=\"hidden\" name=\"_method\" value=\"DELETE\">
-                                <button class=\"btn p-0 text-danger\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
+                                <button class=\"text-xs bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800 px-2 py-1 rounded\" onclick=\"return confirm('HAPUS???')\">Hapus</button>
                             </form>";
                         }
-                        else 
+                        else
                         {
-                            //$show_html = "<a href=\"". route('problems.show', $row) . "\" target=\"_blank\" class=\"text-decoration-none me-2\">Lihat</a>";
+                            $show_html = "<a href=\"". route('problems.show', $row) . "\" target=\"_blank\" class=\"text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 px-2 py-1 rounded\">Lihat</a>";
                         }
 
 
 
                         $html = $show_html . $submit_html . $edit_html . $delete_html;
-                        
-                        return "
-                            {$row->code}
-                            <div class=\"d-flex align-items-center tr-actions\">
+
+                        return "<div class=\"font-medium text-gray-900 dark:text-white\">{$row->code}</div>
+                            <div class=\"flex flex-wrap gap-1 mt-1\">
                                 {$html}
-                            </div>
-                        ";
+                            </div>";
                     }
                 ],
                 [
@@ -496,6 +492,13 @@ class ProblemController extends Controller
                     {
                         return $query->whereNotIn('status', [0]);
                     }
+                },
+                'filterByUser' => function($query) use($request)
+                {
+                    // Filter berdasarkan user role - user biasa hanya bisa lihat laporan mereka sendiri
+                    if(!Auth::user()->hasRole(['admin', 'super user', 'teknisi', 'lembaga', 'keuangan'])) {
+                        return $query->where('user_id', Auth::id());
+                    }
                 }
             ])
             ->filters([
@@ -553,7 +556,18 @@ class ProblemController extends Controller
      */
     public function show(Problem $problem)
     {
-        return view('problems.show', compact('problem'));
+        // Get notifications related to this problem for the current user
+        $problemNotifications = [];
+        if (Auth::check()) {
+            $problemNotifications = Auth::user()
+                ->notifications()
+                ->whereJsonContains('data->problem_id', $problem->id)
+                ->latest()
+                ->take(10)
+                ->get();
+        }
+        
+        return view('problems.show', compact('problem', 'problemNotifications'));
     }
 
     /**
@@ -662,13 +676,21 @@ class ProblemController extends Controller
 
     public function cancelProblem(Problem $problem)
     {
+        $oldStatus = $problem->status;
         $problem->update([
-            'status' => 1
+            'status' => 4 // DIBATALKAN
+        ]);
+        
+        // Notify about problem cancellation
+        $this->notificationService->notifyWorkflowChange($problem, 'problem_cancelled', [
+            'old_status' => $oldStatus,
+            'new_status' => 4,
+            'cancelled_by' => Auth::user()->name
         ]);
 
         return back()
             ->with('status', 'success')
-            ->with('message', 'Anda membatalkan menangani kendala ini');
+            ->with('message', 'Problem telah dibatalkan');
     }
 
     public function finishProblem(Problem $problem)
@@ -691,8 +713,17 @@ class ProblemController extends Controller
 
     public function managementApproval(Problem $problem)
     {
+        $oldStatus = $problem->status;
         $problem->update([
-            'status' => 5
+            'status' => 5,
+            'user_management_id' => Auth::id()
+        ]);
+        
+        // Notify about management approval
+        $this->notificationService->notifyWorkflowChange($problem, 'problem_approved_management', [
+            'old_status' => $oldStatus,
+            'new_status' => 5,
+            'approved_by' => Auth::user()->name
         ]);
 
         return back()
@@ -702,11 +733,19 @@ class ProblemController extends Controller
 
     public function approveProblem(Problem $problem)
     {
-
+        $oldStatus = $problem->status;
+        
         if(Auth::user()->hasRole('lembaga'))
         {
             $problem->update([
                 'user_management_id' => Auth::id()
+            ]);
+            
+            // Notify about management approval
+            $this->notificationService->notifyWorkflowChange($problem, 'problem_approved_management', [
+                'old_status' => $oldStatus,
+                'new_status' => $oldStatus, // Status doesn't change, just approval
+                'approved_by' => Auth::user()->name
             ]);
         }
 
@@ -715,12 +754,26 @@ class ProblemController extends Controller
             $problem->update([
                 'user_finance_id' => Auth::id()
             ]);
+            
+            // Notify about finance approval (completion)
+            $this->notificationService->notifyWorkflowChange($problem, 'problem_approved_finance', [
+                'old_status' => $oldStatus,
+                'new_status' => $oldStatus, // Status doesn't change
+                'approved_by' => Auth::user()->name
+            ]);
         }
 
         if(Auth::user()->hasRole('admin'))
         {
             $problem->update([
                 'admin_id' => Auth::id()
+            ]);
+            
+            // Notify about admin approval
+            $this->notificationService->notifyWorkflowChange($problem, 'problem_approved_admin', [
+                'old_status' => $oldStatus,
+                'new_status' => $oldStatus, // Status doesn't change
+                'approved_by' => Auth::user()->name
             ]);
         }
         

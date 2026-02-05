@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoodController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PhotoUploadController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -49,6 +50,12 @@ Route::middleware('auth')->group(function(){
         Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
     });
 
+    Route::prefix('photos')->group(function(){
+        Route::post('/upload', [PhotoUploadController::class, 'upload'])->name('photos.upload');
+        Route::delete('/delete', [PhotoUploadController::class, 'delete'])->name('photos.delete');
+        Route::get('/list/{problem_item_id}', [PhotoUploadController::class, 'list'])->name('photos.list');
+    });
+
     Route::get('problems/submit/{problem}/management-approval', [ProblemController::class, 'managementApproval'])->name('problems.management-approval');
     Route::get('problems/submit/{problem}', [ProblemController::class, 'submitProblem'])->name('problems.submit');
     Route::get('problems/submit/{problem}/accept', [ProblemController::class, 'acceptProblem'])->name('problems.accept');
@@ -76,3 +83,6 @@ Route::middleware('auth')->group(function(){
         });
 
 });
+
+// AJAX Search Routes
+Route::get('/api/goods/search', [GoodController::class, 'search'])->name('goods.search');

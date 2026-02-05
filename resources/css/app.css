@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    /* Custom Flowbite overrides */
+}
+
 /* Design System Variables */
 :root {
     --color-primary: #2563eb;

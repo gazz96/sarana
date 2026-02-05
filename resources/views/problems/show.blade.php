@@ -95,6 +95,58 @@
                     </div>
                 </div>
 
+                <!-- Notifications Section -->
+                @if(isset($problemNotifications) && $problemNotifications->count() > 0)
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5>Notifikasi Terkait Problem Ini</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group">
+                                @foreach($problemNotifications as $notification)
+                                    @php
+                                        // Handle both JSON string and array data
+                                        if (is_string($notification->data)) {
+                                            $data = json_decode($notification->data, true);
+                                        } else {
+                                            $data = $notification->data;
+                                        }
+                                        
+                                        $eventIcon = getNotificationEmoji($data['event'] ?? '');
+                                        $eventColor = getNotificationColor($data['event'] ?? '');
+                                    @endphp
+                                    <div class="list-group-item {{ $notification->read_at ? '' : 'bg-light' }}">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="flex-shrink-0">
+                                                <span class="w-10 h-10 rounded-full bg-{{ $eventColor }}-100 text-{{ $eventColor }}-600 d-flex align-items-center justify-center font-semibold">
+                                                    {{ $eventIcon }}
+                                                </span>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ $data['event_name'] ?? 'Notifikasi' }}</h6>
+                                                        <p class="mb-1 text-muted">{{ $data['message'] ?? '' }}</p>
+                                                        @if(isset($data['problem_code']))
+                                                            <small class="text-muted">Kode: {{ $data['problem_code'] }}</small>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-end">
+                                                        @if(!$notification->read_at)
+                                                            <span class="badge bg-primary">Baru</span>
+                                                        @endif
+                                                        <small class="text-muted d-block">{{ $notification->created_at->diffForHumans() }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="d-flex justify-content-end align-items-center">
                     <a href="{{ route('problems.index') }}" class="btn btn-outline-secondary me-2">Kembali</a>
                    
@@ -107,6 +159,36 @@
     </form>
 
 @endsection
+
+@php
+function getNotificationEmoji($event) {
+    $emojis = [
+        'problem_created' => '➕',
+        'problem_submitted' => '📤',
+        'problem_accepted' => '✅',
+        'problem_finished' => '🔧',
+        'problem_cancelled' => '❌',
+        'problem_approved_management' => '🛡️',
+        'problem_approved_admin' => '👤',
+        'problem_approved_finance' => '💳'
+    ];
+    return $emojis[$event] ?? '🔔';
+}
+
+function getNotificationColor($event) {
+    $colors = [
+        'problem_created' => 'blue',
+        'problem_submitted' => 'yellow',
+        'problem_accepted' => 'green',
+        'problem_finished' => 'blue',
+        'problem_cancelled' => 'red',
+        'problem_approved_management' => 'blue',
+        'problem_approved_admin' => 'green',
+        'problem_approved_finance' => 'blue'
+    ];
+    return $colors[$event] ?? 'gray';
+}
+@endphp
 
 
 @section('footer')
