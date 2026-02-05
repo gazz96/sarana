@@ -31,7 +31,7 @@ Route::get('/', function () {
 
 Route::prefix('auth')->group(function(){
     Route::get('/', [AuthController::class, 'index'])->name('auth.index');
-    Route::post('/', [AuthController::class, 'login'])->name('login');
+    Route::post('/', [AuthController::class, 'login'])->name('login')->middleware('rate.limit:5,1'); // 5 attempts per minute
 });
 
 Route::middleware('auth')->group(function(){
@@ -51,8 +51,8 @@ Route::middleware('auth')->group(function(){
     });
 
     Route::prefix('photos')->group(function(){
-        Route::post('/upload', [PhotoUploadController::class, 'upload'])->name('photos.upload');
-        Route::delete('/delete', [PhotoUploadController::class, 'delete'])->name('photos.delete');
+        Route::post('/upload', [PhotoUploadController::class, 'upload'])->name('photos.upload')->middleware('rate.limit:20,1'); // 20 uploads per minute
+        Route::delete('/delete', [PhotoUploadController::class, 'delete'])->name('photos.delete')->middleware('rate.limit:30,1');
         Route::get('/list/{problem_item_id}', [PhotoUploadController::class, 'list'])->name('photos.list');
     });
 
