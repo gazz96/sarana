@@ -34,6 +34,7 @@ Route::get('/', function () {
 Route::prefix('auth')->group(function(){
     Route::get('/', [AuthController::class, 'index'])->name('auth.index');
     Route::post('/', [AuthController::class, 'login'])->name('login')->middleware('rate.limit:5,1'); // 5 attempts per minute
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 Route::middleware('auth')->group(function(){

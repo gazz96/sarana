@@ -11,27 +11,48 @@ class AuthController extends Controller
 
     function index() 
     {
-        return view('auth');
+        // Create a simple option object to avoid errors
+        $option = new class {
+            public function getByKey($key) {
+                return config('app.name', 'SARANAS');
+            }
+        };
+        
+        return view('auth', compact('option'));
     }
 
     public function login(Request $request)
     {
-
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        
-        if((Auth::attempt($validated)))
-        {
+        if (Auth::attempt($validated)) {
+            $request->session()->regenerate();
+            
             return redirect()
-                ->intended(route('dashboard.index'));
-        };
+                ->intended(route('dashboard.index'))
+                ->with('status', 'success')
+                ->with('message', 'Login berhasil! Selamat datang ' . Auth::user()->name);
+        }
 
         return back()
             ->with('status', 'warning')
-            ->with('message', 'Username/Password tidak sama');
+            ->with('message', 'Username/Password tidak sama')
+            ->withInput($request->only('email'));
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('auth.index')
+            ->with('status', 'success')
+            ->with('message', 'Anda telah logout');
     }    
 
 }
