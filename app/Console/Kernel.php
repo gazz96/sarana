@@ -25,6 +25,27 @@ class Kernel extends ConsoleKernel
         $schedule->command('emails:process-queue')
                  ->everyFiveMinutes()
                  ->description('Process the email queue');
+
+        // Cache optimization - weekly
+        $schedule->command('cache:clear')
+                 ->weekly()
+                 ->sundays()
+                 ->at('03:00')
+                 ->timezone('Asia/Jakarta')
+                 ->description('Clear application cache weekly');
+
+        // Database cleanup - monthly
+        $schedule->command('db:cleanup')
+                 ->monthly()
+                 ->description('Clean up old database records');
+
+        // Performance analysis - weekly
+        $schedule->command('performance:analyze')
+                 ->weekly()
+                 ->mondays()
+                 ->at('04:00')
+                 ->timezone('Asia/Jakarta')
+                 ->description('Analyze system performance weekly');
     }
 
     /**
