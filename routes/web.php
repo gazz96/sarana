@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoodController;
 use App\Http\Controllers\LocationController;
@@ -92,6 +93,18 @@ Route::middleware('auth')->group(function(){
             Route::get('activities', [MonitoringController::class, 'activities'])->name('activities');
             Route::get('performance', [MonitoringController::class, 'performance'])->name('performance');
             Route::post('health-check', [MonitoringController::class, 'runHealthCheck'])->name('run-health-check');
+        });
+
+        // Backup Routes (Admin & Lembaga only)
+        Route::prefix('backup')->name('backup.')->group(function(){
+            Route::get('dashboard', [BackupController::class, 'dashboard'])->name('dashboard');
+            Route::post('create', [BackupController::class, 'createBackup'])->name('create');
+            Route::post('restore', [BackupController::class, 'restoreBackup'])->name('restore');
+            Route::delete('delete', [BackupController::class, 'deleteBackup'])->name('delete');
+            Route::get('download/{fileName}', [BackupController::class, 'downloadBackup'])->name('download');
+            Route::post('test', [BackupController::class, 'testBackup'])->name('test');
+            Route::get('stats', [BackupController::class, 'stats'])->name('stats');
+            Route::get('list', [BackupController::class, 'list'])->name('list');
         });
 
 });
