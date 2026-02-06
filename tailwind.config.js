@@ -11,6 +11,14 @@ module.exports = {
         sans: ['Inter', 'Poppins', 'sans-serif'],
       },
       colors: {
+        saranas: {
+          blue: '#295EA4',
+          yellow: '#FFCB4F',
+          'blue-light': '#4A7DB8',
+          'blue-dark': '#1E4578',
+          'yellow-light': '#FFE070',
+          'yellow-dark': '#E5B040',
+        },
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',
@@ -82,6 +90,17 @@ module.exports = {
   daisyui: {
     themes: [
       {
+        saranas: {
+          "primary": "#295EA4",
+          "secondary": "#FFCB4F",
+          "accent": "#4A7DB8",
+          "neutral": "#1E4578",
+          "base-100": "#ffffff",
+          "info": "#295EA4",
+          "success": "#22c55e",
+          "warning": "#FFCB4F",
+          "error": "#ef4444",
+        },
         light: {
           "primary": "#2563eb",
           "secondary": "#4b5563",

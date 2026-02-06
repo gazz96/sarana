@@ -10,7 +10,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Daftar Notifikasi</h5>
                     @if(auth()->user()->unreadNotifications->count() > 0)
-                        <button onclick="markAllAsReadPage()" class="btn btn-sm btn-primary">
+                        <button onclick="markAllAsReadPage()" class="btn btn-sm text-white border-none" style="background-color: #295EA4;">
                             Tandai Semua Dibaca
                         </button>
                     @endif
@@ -51,7 +51,7 @@
                                                 </div>
                                                 <div class="text-end">
                                                     @if(!$notification->read_at)
-                                                        <span class="badge bg-primary">Baru</span>
+                                                        <span class="badge text-white" style="background-color: #295EA4;">Baru</span>
                                                     @endif
                                                     <small class="text-muted d-block">{{ $notification->created_at->diffForHumans() }}</small>
                                                 </div>

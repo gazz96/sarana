@@ -45,7 +45,7 @@
                             Reset
                         </a>
                         @endif
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn text-white border-none" style="background-color: #295EA4;">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -63,7 +63,7 @@
         <!-- Total Expenses -->
         <div class="stats stats-vertical shadow-sm bg-base-100">
             <div class="stat-title">Total Pengeluaran</div>
-            <div class="stat-value text-primary">Rp {{ number_format($statistics['total_expenses']) }}</div>
+            <div class="stat-value" style="color: #295EA4;">Rp {{ number_format($statistics['total_expenses']) }}</div>
             <div class="stat-desc">{{ $statistics['total_items'] }} barang diperbaiki</div>
         </div>
 
@@ -173,8 +173,8 @@
     <!-- Empty State -->
     @if(!isset($table) || strpos($table, 'No data') !== false)
     <div class="text-center py-16">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: rgba(41, 94, 164, 0.1);">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #295EA4;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
         </div>

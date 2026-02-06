@@ -6,17 +6,17 @@
     <div class="mb-8 animate-fade-in">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex-1">
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+                <h1 class="text-3xl font-bold bg-gradient-to-r bg-clip-text text-transparent mb-2" style="background-image: linear-gradient(to right, #1E4578, #295EA4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                     Dashboard {{ ucfirst($role) }}
                 </h1>
                 <p class="text-gray-600 text-lg">
-                    👋 Selamat datang, <span class="font-semibold text-primary-700">{{ Auth::user()->name }}</span>! 
+                    👋 Selamat datang, <span class="font-semibold" style="color: #295EA4;">{{ Auth::user()->name }}</span>! 
                     Berikut overview sistem hari ini.
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <div class="px-4 py-2 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl border border-primary-200">
-                    <span class="text-sm font-medium text-primary-700">{{ now()->format('l, d F Y') }}</span>
+                <div class="px-4 py-2 bg-gradient-to-r rounded-xl border" style="background-image: linear-gradient(to right, rgba(41, 94, 164, 0.1), rgba(41, 94, 164, 0.2)); border-color: rgba(41, 94, 164, 0.3);">
+                    <span class="text-sm font-medium" style="color: #295EA4;">{{ now()->format('l, d F Y') }}</span>
                 </div>
             </div>
         </div>
@@ -121,7 +121,7 @@
                             <tbody>
                                 @foreach($statistics['recent_activities'] as $activity)
                                 <tr class="animate-fade-in" style="animation-delay: {{ $loop->iteration * 0.05 }}s">
-                                    <td><strong class="text-primary-700">{{ $activity['code'] ?? 'N/A' }}</strong></td>
+                                    <td><strong style="color: #295EA4;">{{ $activity['code'] ?? 'N/A' }}</strong></td>
                                     <td class="text-truncate" style="max-width: 200px;">{{ $activity['issue'] ?? '' }}</td>
                                     <td>
                                         @php $statusClass = getStatusClass($activity['status'] ?? 0) @endphp
@@ -190,14 +190,14 @@
                         <tbody>
                             @foreach($statistics['pending_approvals'] as $pending)
                             <tr>
-                                <td><strong class="text-primary-700">{{ $pending['code'] }}</strong></td>
+                                <td><strong style="color: #295EA4;">{{ $pending['code'] }}</strong></td>
                                 <td>{{ $pending['issue'] }}</td>
                                 <td>{{ $pending['requester'] }}</td>
                                 <td>{{ $pending['technician'] }}</td>
                                 <td><span class="font-semibold text-gray-700">Rp {{ number_format($pending['estimated_cost'], 0, ',', '.') }}</span></td>
                                 <td>{{ $pending['created_at'] }}</td>
                                 <td>
-                                    <a href="{{ route('problems.show', $pending['code']) }}" class="btn btn-primary text-sm">
+                                    <a href="{{ route('problems.show', $pending['code']) }}" class="btn text-sm text-white border-none" style="background-color: #295EA4;">
                                         Review
                                     </a>
                                 </td>
@@ -236,7 +236,7 @@
                         <tbody>
                             @foreach($statistics['pending_payments'] as $payment)
                             <tr>
-                                <td><strong class="text-primary-700">{{ $payment['code'] }}</strong></td>
+                                <td><strong style="color: #295EA4;">{{ $payment['code'] }}</strong></td>
                                 <td>{{ $payment['issue'] }}</td>
                                 <td>{{ $payment['technician'] }}</td>
                                 <td><span class="font-semibold text-gray-700">Rp {{ number_format($payment['total_cost'], 0, ',', '.') }}</span></td>

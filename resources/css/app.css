@@ -6,16 +6,18 @@
     /* Custom Flowbite overrides */
 }
 
-/* Design System Variables */
+/* Design System Variables - SARANAS Custom Colors */
 :root {
-    --color-primary: #2563eb;
-    --color-primary-dark: #1d4ed8;
-    --color-primary-light: #3b82f6;
-    --color-secondary: #64748b;
-    --color-success: #10b981;
+    --color-primary: #295EA4;
+    --color-primary-dark: #1E4578;
+    --color-primary-light: #4A7DB8;
+    --color-secondary: #FFCB4F;
+    --color-secondary-dark: #E5B040;
+    --color-secondary-light: #FFE070;
+    --color-success: #22c55e;
     --color-danger: #ef4444;
-    --color-warning: #f59e0b;
-    --color-accent: #8b5cf6;
+    --color-warning: #FFCB4F;
+    --color-accent: #4A7DB8;
     --color-bg: #f8fafc;
     --color-surface: #ffffff;
     --color-border: #e2e8f0;
@@ -84,7 +86,7 @@
     
     .btn:focus {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        box-shadow: 0 0 0 3px rgba(41, 94, 164, 0.1);
     }
     
     .btn-primary {
@@ -178,7 +180,7 @@
     .form-control:focus {
         outline: none;
         border-color: var(--color-primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        box-shadow: 0 0 0 3px rgba(41, 94, 164, 0.1);
     }
     
     .form-label {
@@ -248,7 +250,7 @@
     }
     
     .badge-primary {
-        background-color: rgba(37, 99, 235, 0.1);
+        background-color: rgba(41, 94, 164, 0.1);
         color: var(--color-primary);
     }
     
@@ -332,7 +334,7 @@
     }
     
     .sidebar-link.active {
-        background-color: rgba(37, 99, 235, 0.1);
+        background-color: rgba(41, 94, 164, 0.1);
         color: var(--color-primary);
     }
     
@@ -423,7 +425,7 @@
         width: 3rem;
         height: 3rem;
         border-radius: var(--radius-md);
-        background-color: rgba(37, 99, 235, 0.1);
+        background-color: rgba(41, 94, 164, 0.1);
         color: var(--color-primary);
         display: flex;
         align-items: center;
@@ -454,7 +456,7 @@
         width: 2.5rem;
         height: 2.5rem;
         border-radius: var(--radius-md);
-        background-color: rgba(37, 99, 235, 0.1);
+        background-color: rgba(41, 94, 164, 0.1);
         color: var(--color-primary);
         display: flex;
         align-items: center;

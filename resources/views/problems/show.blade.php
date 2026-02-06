@@ -133,7 +133,7 @@
                                                     </div>
                                                     <div class="text-end">
                                                         @if(!$notification->read_at)
-                                                            <span class="badge bg-primary">Baru</span>
+                                                            <span class="badge" style="background-color: #295EA4;">Baru</span>
                                                         @endif
                                                         <small class="text-muted d-block">{{ $notification->created_at->diffForHumans() }}</small>
                                                     </div>
